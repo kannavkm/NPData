@@ -25,10 +25,10 @@ while True:
         else:
             print("Failed to connect")
 
-        tmp = input("Enter any key to CONTINUE>")
+        tmp = input(">>>")
 
 
     except:
         tmp = sp.call('clear', shell=True)
         print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
-        tmp = input("Enter any key to CONTINUE>")
+        tmp = input(">>>")
