@@ -1,10 +1,8 @@
 import pymysql.cursors
 
 import config
-import src.insert as ins
 
 while True:
-
     try:
         # Set db name accordingly which have been create by you
         # Set host to the server's address if you don't want to use local SQL server
@@ -17,14 +15,12 @@ while True:
             cursorclass=pymysql.cursors.DictCursor
         )
 
-        ins.insert_species()
-
         if con.open:
             print("Connected")
         else:
             print("Failed to connect")
-
         tmp = input(">>>")
-    except:
-        print("Error occurred")
+
+    except pymysql.err.OperationalError as e:
+        print(e.args[0], ':', e.args[1])
         tmp = input(">>>")
