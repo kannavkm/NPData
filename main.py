@@ -1,5 +1,7 @@
 import pymysql.cursors
+
 import config
+import src.insert as ins
 
 while True:
 
@@ -14,6 +16,8 @@ while True:
             port=config.port,
             cursorclass=pymysql.cursors.DictCursor
         )
+
+        ins.insert_species()
 
         if con.open:
             print("Connected")
