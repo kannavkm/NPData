@@ -24,7 +24,7 @@ def validate_date(date):
         return False
 
 
-def validate_range(x, lo, hi=9999999):
+def validate_range(x, lo, hi):
     if x < lo:
         return False
     if x > hi:
