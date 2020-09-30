@@ -3,8 +3,11 @@ def repeat_and_error(func, func2):
         if func2 is not None:
             func2()
         for _ in range(1, 5):
-            if func():
-                break
+            try:
+                if func():
+                    break
+            except ValueError as e:
+                print('Input not correct')
             if _ == 4:
                 raise ValueError('NOOOOOO')
 

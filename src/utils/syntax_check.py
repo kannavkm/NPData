@@ -15,15 +15,16 @@ def validate_email(email):
         return False
 
 
-def validate_date(day, month, year):
+def validate_date(date):
     try:
+        year, month, day = map(int, date.split('-'))
         a = datetime.datetime(year=year, month=month, day=day)
         return True
     except ValueError:
         return False
 
 
-def validate_range(x, lo, hi):
+def validate_range(x, lo, hi=9999999):
     if x < lo:
         return False
     if x > hi:
