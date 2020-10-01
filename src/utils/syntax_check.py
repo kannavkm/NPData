@@ -34,3 +34,7 @@ def validate_range(x, lo, hi):
 
 def validate_phone_number(num):
     regex = '^[0-9]{10}'
+    if re.search(regex, num):
+        return True
+    else:
+        return False
