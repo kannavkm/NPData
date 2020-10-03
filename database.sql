@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.21, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: testDB
+-- Host: 127.0.0.1    Database: testfk
 -- ------------------------------------------------------
 -- Server version	8.0.21
 
@@ -60,8 +60,8 @@ DROP TABLE IF EXISTS `Booking_service`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Booking_service`
 (
-    `booking_id`     int NOT NULL,
-    `sub_service_id` varchar(255) DEFAULT NULL,
+    `booking_id`     int NOT NULL AUTO_INCREMENT,
+    `sub_service_id` int DEFAULT NULL,
     `price`          int NOT NULL,
     PRIMARY KEY (`booking_id`),
     KEY `sub_service_id` (`sub_service_id`),
@@ -95,7 +95,7 @@ CREATE TABLE `Class_classification`
     `order` varchar(255) NOT NULL,
     PRIMARY KEY (`order`, `class`),
     KEY `Class_classification_class_index` (`class`),
-    CONSTRAINT `Class_classification_Kingdom_classification_class_fk` FOREIGN KEY (`class`) REFERENCES `Kingdom_classification` (`class`) ON UPDATE CASCADE
+    CONSTRAINT `Class_classification_Kingdom_classification_class_fk` FOREIGN KEY (`class`) REFERENCES `Kingdom_classification` (`class`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -109,7 +109,13 @@ LOCK TABLES `Class_classification` WRITE;
 /*!40000 ALTER TABLE `Class_classification`
     DISABLE KEYS */;
 INSERT INTO `Class_classification`
-VALUES ('insecta', 'hymenoptera');
+VALUES ('Aves', 'Ciconiiformes'),
+       ('Aves', 'Otidiformes'),
+       ('Mammalia', 'Carnivora'),
+       ('Mammalia', 'Proboscidea'),
+       ('Reptilia', 'Squamata'),
+       ('rosids', 'Fabales'),
+       ('rosids', 'Rosales');
 /*!40000 ALTER TABLE `Class_classification`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -123,8 +129,8 @@ DROP TABLE IF EXISTS `Crosses`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Crosses`
 (
-    `feature_id` varchar(255) NOT NULL,
-    `trail_id`   varchar(255) NOT NULL,
+    `feature_id` int NOT NULL,
+    `trail_id`   int NOT NULL,
     PRIMARY KEY (`feature_id`, `trail_id`),
     KEY `trail_id` (`trail_id`),
     CONSTRAINT `Crosses_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`),
@@ -154,7 +160,7 @@ DROP TABLE IF EXISTS `Data`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Data`
 (
-    `data_id`     varchar(255) NOT NULL,
+    `data_id`     int NOT NULL AUTO_INCREMENT,
     `description` longtext,
     `data_link`   varchar(255) DEFAULT NULL,
     `data_type`   varchar(255) DEFAULT NULL,
@@ -184,8 +190,9 @@ DROP TABLE IF EXISTS `Demography`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Demography`
 (
-    `presence_id`           varchar(255)   NOT NULL,
+    `presence_id`           int            NOT NULL,
     `time_stamp`            timestamp      NOT NULL,
+    `total_population`      int            DEFAULT NULL,
     `percent_of_lifespan`   decimal(10, 0) DEFAULT NULL,
     `percent_of_population` decimal(10, 0) NOT NULL,
     PRIMARY KEY (`presence_id`, `time_stamp`),
@@ -215,7 +222,7 @@ DROP TABLE IF EXISTS `Department`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Department`
 (
-    `contained_in`  int          NOT NULL,
+    `contained_in`  varchar(4)   NOT NULL,
     `dep_number`    int          NOT NULL,
     `dep_name`      varchar(255) NOT NULL,
     `is_chaired_by` int DEFAULT NULL,
@@ -248,7 +255,7 @@ DROP TABLE IF EXISTS `Employee`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Employee`
 (
-    `emp_id`          int          NOT NULL,
+    `emp_id`          int          NOT NULL AUTO_INCREMENT,
     `emp_name`        varchar(255) NOT NULL,
     `date_of_birth`   date                           DEFAULT NULL,
     `contact_number`  varchar(15)                    DEFAULT NULL,
@@ -257,12 +264,11 @@ CREATE TABLE `Employee`
     `date_of_joining` date                           DEFAULT (now()),
     `role`            varchar(255)                   DEFAULT NULL,
     `works_for_dno`   int                            DEFAULT NULL,
-    `national_park`   int                            DEFAULT NULL,
+    `national_park`   varchar(4)                     DEFAULT NULL,
     PRIMARY KEY (`emp_id`),
     UNIQUE KEY `emp_email` (`emp_email`),
     KEY `national_park` (`national_park`, `works_for_dno`),
-    CONSTRAINT `Employee_ibfk_1` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`),
-    CONSTRAINT `Employee_ibfk_3` FOREIGN KEY (`national_park`, `works_for_dno`) REFERENCES `Department` (`contained_in`, `dep_number`)
+    CONSTRAINT `Employee_ibfk_1` FOREIGN KEY (`national_park`, `works_for_dno`) REFERENCES `Department` (`contained_in`, `dep_number`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -291,8 +297,8 @@ CREATE TABLE `Family_classification`
     `family` varchar(255) NOT NULL,
     `genus`  varchar(255) NOT NULL,
     PRIMARY KEY (`genus`, `family`),
-    KEY `Family_classification_ibfk_1` (`family`),
-    CONSTRAINT `Family_classification_ibfk_1` FOREIGN KEY (`family`) REFERENCES `Order_classification` (`family`) ON UPDATE CASCADE
+    KEY `family` (`family`),
+    CONSTRAINT `Family_classification_ibfk_1` FOREIGN KEY (`family`) REFERENCES `Order_classification` (`family`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -306,7 +312,15 @@ LOCK TABLES `Family_classification` WRITE;
 /*!40000 ALTER TABLE `Family_classification`
     DISABLE KEYS */;
 INSERT INTO `Family_classification`
-VALUES ('apidae', 'apis');
+VALUES ('Ciconiidae', 'Leptoptilos'),
+       ('Elephantidae', 'Elephas'),
+       ('Fabaceae', 'Saraca'),
+       ('felidae', 'Neofelis'),
+       ('felidae', 'Panthera'),
+       ('Moraceae', 'Ficus'),
+       ('Otididae', 'Ardeotis'),
+       ('Pythonidae', 'Malayopython'),
+       ('Pythonidae', 'Python');
 /*!40000 ALTER TABLE `Family_classification`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -321,7 +335,7 @@ DROP TABLE IF EXISTS `Feature_Feedback`;
 CREATE TABLE `Feature_Feedback`
 (
     `user_id`    int NOT NULL,
-    `feature_id` varchar(255)   DEFAULT NULL,
+    `feature_id` int            DEFAULT NULL,
     `rating`     decimal(10, 0) DEFAULT NULL COMMENT 'between 1 and 5',
     `remarks`    longtext,
     `date`       datetime       DEFAULT NULL,
@@ -354,8 +368,8 @@ DROP TABLE IF EXISTS `Feature_images`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Feature_images`
 (
-    `feature_id` varchar(255) NOT NULL,
-    `image_id`   int          NOT NULL,
+    `feature_id` int NOT NULL,
+    `image_id`   int NOT NULL,
     `image`      longblob,
     PRIMARY KEY (`feature_id`, `image_id`),
     CONSTRAINT `Feature_images_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
@@ -384,7 +398,7 @@ DROP TABLE IF EXISTS `Features`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Features`
 (
-    `feature_id`   varchar(255) NOT NULL,
+    `feature_id`   int          NOT NULL AUTO_INCREMENT,
     `feature_name` varchar(255) NOT NULL,
     `availability` int          DEFAULT NULL,
     `latitude`     varchar(255) DEFAULT NULL,
@@ -421,6 +435,8 @@ CREATE TABLE `Feeds_on`
     `prey_specific_name`     varchar(255) DEFAULT NULL,
     KEY `predator_genus` (`predator_genus`, `predator_specific_name`),
     KEY `prey_genus` (`prey_genus`, `prey_specific_name`),
+    CONSTRAINT `Feeds_on_ibfk_1` FOREIGN KEY (`predator_genus`) REFERENCES `Species` (`genus`),
+    CONSTRAINT `Feeds_on_ibfk_2` FOREIGN KEY (`prey_genus`) REFERENCES `Species` (`genus`),
     CONSTRAINT `Feeds_on_ibfk_3` FOREIGN KEY (`predator_genus`, `predator_specific_name`) REFERENCES `Species` (`genus`, `specific_name`),
     CONSTRAINT `Feeds_on_ibfk_4` FOREIGN KEY (`prey_genus`, `prey_specific_name`) REFERENCES `Species` (`genus`, `specific_name`)
 ) ENGINE = InnoDB
@@ -465,7 +481,11 @@ LOCK TABLES `Kingdom_classification` WRITE;
 /*!40000 ALTER TABLE `Kingdom_classification`
     DISABLE KEYS */;
 INSERT INTO `Kingdom_classification`
-VALUES ('animalia', 'insecta');
+VALUES ('Plantae', 'Angiosperms'),
+       ('Animalia', 'Aves'),
+       ('Animalia', 'Mammalia'),
+       ('Animalia', 'Reptilia'),
+       ('Plantae', 'Rosids');
 /*!40000 ALTER TABLE `Kingdom_classification`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -479,7 +499,7 @@ DROP TABLE IF EXISTS `Lodging`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Lodging`
 (
-    `feature_id`       varchar(255) NOT NULL,
+    `feature_id`       int          NOT NULL,
     `name`             varchar(255) NOT NULL,
     `person_in_charge` varchar(255) NOT NULL,
     `capacity`         int         DEFAULT NULL,
@@ -512,7 +532,7 @@ DROP TABLE IF EXISTS `National_Park`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `National_Park`
 (
-    `unit_code`   int          NOT NULL,
+    `unit_code`   varchar(4)   NOT NULL,
     `name`        varchar(255) NOT NULL,
     `region_code` varchar(255) NOT NULL,
     `boundary`    geometry       DEFAULT NULL,
@@ -548,8 +568,8 @@ CREATE TABLE `Order_classification`
     `order`  varchar(255) NOT NULL,
     `family` varchar(255) NOT NULL,
     PRIMARY KEY (`family`, `order`),
-    KEY `Order_classification_ibfk_1` (`order`),
-    CONSTRAINT `Order_classification_ibfk_1` FOREIGN KEY (`order`) REFERENCES `Class_classification` (`order`) ON UPDATE CASCADE
+    KEY `order` (`order`),
+    CONSTRAINT `Order_classification_ibfk_1` FOREIGN KEY (`order`) REFERENCES `Class_classification` (`order`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -563,7 +583,13 @@ LOCK TABLES `Order_classification` WRITE;
 /*!40000 ALTER TABLE `Order_classification`
     DISABLE KEYS */;
 INSERT INTO `Order_classification`
-VALUES ('hymenoptera', 'apidae');
+VALUES ('carnivora', 'felidae'),
+       ('ciconiiformes', 'Ciconiidae'),
+       ('Fabales', 'Fabaceae'),
+       ('Otidiformes', 'Otididae'),
+       ('Proboscidea', 'Elephantidae'),
+       ('Rosales', 'Moraceae'),
+       ('Squamata', 'Pythonidae');
 /*!40000 ALTER TABLE `Order_classification`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -577,7 +603,7 @@ DROP TABLE IF EXISTS `Permit`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Permit`
 (
-    `permit_id`              int  NOT NULL,
+    `permit_id`              int  NOT NULL AUTO_INCREMENT,
     `permit_expiration_date` date NOT NULL,
     PRIMARY KEY (`permit_id`)
 ) ENGINE = InnoDB
@@ -605,10 +631,10 @@ DROP TABLE IF EXISTS `Presence`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Presence`
 (
-    `presence_id`   varchar(255) NOT NULL,
+    `presence_id`   int NOT NULL AUTO_INCREMENT,
     `genus`         varchar(255)                      DEFAULT NULL,
     `specific_name` varchar(255)                      DEFAULT NULL,
-    `national_park` int                               DEFAULT NULL,
+    `national_park` varchar(4)                        DEFAULT NULL,
     `nativeness`    tinyint(1)                        DEFAULT NULL,
     `is_attraction` tinyint(1)                        DEFAULT NULL,
     `abundance`     enum ('rare','common','uncommon') DEFAULT NULL,
@@ -618,9 +644,8 @@ CREATE TABLE `Presence`
     PRIMARY KEY (`presence_id`),
     KEY `genus` (`genus`, `specific_name`),
     KEY `national_park` (`national_park`),
-    CONSTRAINT `Presence_ibfk_1` FOREIGN KEY (`genus`) REFERENCES `Species` (`genus`),
-    CONSTRAINT `Presence_ibfk_3` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`),
-    CONSTRAINT `Presence_ibfk_5` FOREIGN KEY (`genus`, `specific_name`) REFERENCES `Species` (`genus`, `specific_name`)
+    CONSTRAINT `Presence_ibfk_1` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`),
+    CONSTRAINT `Presence_ibfk_2` FOREIGN KEY (`genus`, `specific_name`) REFERENCES `Species` (`genus`, `specific_name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -646,7 +671,7 @@ DROP TABLE IF EXISTS `Public_Facilities`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Public_Facilities`
 (
-    `feature_id`       varchar(255) NOT NULL,
+    `feature_id`       int          NOT NULL,
     `name`             varchar(255) NOT NULL,
     `person_in_charge` varchar(255) NOT NULL,
     PRIMARY KEY (`feature_id`),
@@ -705,7 +730,7 @@ DROP TABLE IF EXISTS `Report`;
 CREATE TABLE `Report`
 (
     `report_title`      varchar(255) NOT NULL,
-    `parent_data`       varchar(255) NOT NULL,
+    `parent_data`       int          NOT NULL,
     `publishing_status` int DEFAULT NULL,
     PRIMARY KEY (`report_title`, `parent_data`),
     KEY `parent_data` (`parent_data`),
@@ -737,13 +762,12 @@ DROP TABLE IF EXISTS `Report_coauthors`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Report_coauthors`
 (
-    `report_title`  varchar(255) NOT NULL,
-    `report`        varchar(255) NOT NULL,
-    `coauthor_name` varchar(255) NOT NULL,
-    PRIMARY KEY (`report_title`, `report`, `coauthor_name`),
-    KEY `report` (`report`),
-    CONSTRAINT `Report_coauthors_ibfk_1` FOREIGN KEY (`report_title`) REFERENCES `Report` (`report_title`),
-    CONSTRAINT `Report_coauthors_ibfk_2` FOREIGN KEY (`report`) REFERENCES `Data` (`data_id`)
+    `report_title`       varchar(255) NOT NULL,
+    `report_parent_data` int          NOT NULL,
+    `coauthor_name`      varchar(255) NOT NULL,
+    PRIMARY KEY (`report_title`, `report_parent_data`, `coauthor_name`),
+    KEY `report` (`report_parent_data`),
+    CONSTRAINT `Report_coauthors_ibfk_1` FOREIGN KEY (`report_title`, `report_parent_data`) REFERENCES `Report` (`report_title`, `parent_data`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -769,7 +793,7 @@ DROP TABLE IF EXISTS `Researcher`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Researcher`
 (
-    `researcher_id`   varchar(255) NOT NULL,
+    `researcher_id`   int          NOT NULL AUTO_INCREMENT,
     `name`            varchar(255) NOT NULL,
     `contact_number`  varchar(15)  DEFAULT NULL,
     `email`           varchar(255) NOT NULL,
@@ -803,8 +827,8 @@ DROP TABLE IF EXISTS `Service_Feature`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Service_Feature`
 (
-    `service_id` varchar(255) NOT NULL,
-    `feature_id` varchar(255) NOT NULL,
+    `service_id` int NOT NULL,
+    `feature_id` int NOT NULL,
     PRIMARY KEY (`service_id`, `feature_id`),
     KEY `feature_id` (`feature_id`),
     CONSTRAINT `Service_Feature_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`),
@@ -834,8 +858,8 @@ DROP TABLE IF EXISTS `Service_Feedback`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Service_Feedback`
 (
-    `user_id`    int          NOT NULL,
-    `service_id` varchar(255) NOT NULL,
+    `user_id`    int NOT NULL,
+    `service_id` int NOT NULL,
     `rating`     decimal(10, 0) DEFAULT NULL COMMENT 'between 1 and 5',
     `remarks`    longtext,
     `date`       datetime       DEFAULT NULL,
@@ -868,8 +892,8 @@ DROP TABLE IF EXISTS `Service_timings`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Service_timings`
 (
-    `sub_service_id` varchar(255) NOT NULL,
-    `service_id`     varchar(255)                                                                  DEFAULT NULL,
+    `sub_service_id` int NOT NULL AUTO_INCREMENT,
+    `service_id`     int                                                                           DEFAULT NULL,
     `timings`        time                                                                          DEFAULT NULL,
     `day_of_service` enum ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
     PRIMARY KEY (`sub_service_id`),
@@ -900,13 +924,13 @@ DROP TABLE IF EXISTS `Services`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Services`
 (
-    `service_id`   varchar(255)   NOT NULL,
+    `service_id`   int            NOT NULL AUTO_INCREMENT,
     `name`         varchar(255)   NOT NULL,
-    `availability` int DEFAULT NULL,
-    `capacity`     int DEFAULT NULL,
+    `availability` int        DEFAULT NULL,
+    `capacity`     int        DEFAULT NULL,
     `price`        decimal(10, 0) NOT NULL,
     `description`  longtext,
-    `provided_by`  int DEFAULT NULL,
+    `provided_by`  varchar(4) DEFAULT NULL,
     PRIMARY KEY (`service_id`),
     KEY `provided_by` (`provided_by`),
     CONSTRAINT `Services_ibfk_1` FOREIGN KEY (`provided_by`) REFERENCES `National_Park` (`unit_code`)
@@ -935,16 +959,16 @@ DROP TABLE IF EXISTS `Species`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Species`
 (
-    `genus`            varchar(255)                                                                                                                              NOT NULL,
-    `specific_name`    varchar(255)                                                                                                                              NOT NULL,
-    `taxonomy_code`    varchar(10)                                                                                                                               NOT NULL,
-    `name`             varchar(255)                                                                                                                              NOT NULL,
-    `vulnerability`    enum ('Extinct','Extinct from wild','Critically Endangered','Endangered','Vulnerable','Near Threatened','Least Concern','Data Deficient') NOT NULL,
-    `average_lifespan` decimal(10, 0)                                                                                                                            NOT NULL,
+    `genus`            varchar(255)                                                                                                             NOT NULL,
+    `specific_name`    varchar(255)                                                                                                             NOT NULL,
+    `taxonomy_code`    varchar(10)                                                                                                              NOT NULL,
+    `name`             varchar(255)                                                                                                             NOT NULL,
+    `vulnerability`    enum ('Extinct','Extinct from wild','Critically Endangered','Endangered','Vulnerable','Near Threatened','Least Concern') NOT NULL,
+    `average_lifespan` decimal(10, 0)                                                                                                           NOT NULL,
     PRIMARY KEY (`genus`, `specific_name`),
     UNIQUE KEY `taxonomy_code` (`taxonomy_code`),
     UNIQUE KEY `name` (`name`),
-    CONSTRAINT `Species_ibfk_1` FOREIGN KEY (`genus`) REFERENCES `Family_classification` (`genus`) ON UPDATE CASCADE
+    CONSTRAINT `Species_ibfk_1` FOREIGN KEY (`genus`) REFERENCES `Family_classification` (`genus`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -970,7 +994,7 @@ DROP TABLE IF EXISTS `Species_habitats`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Species_habitats`
 (
-    `presence_id`     varchar(255)                                                           NOT NULL,
+    `presence_id`     int                                                                    NOT NULL,
     `type_of_habitat` enum ('Marshland','Desert','Savannah','Mountainous','Forest','Tundra') NOT NULL,
     PRIMARY KEY (`presence_id`, `type_of_habitat`),
     CONSTRAINT `Species_habitats_ibfk_1` FOREIGN KEY (`presence_id`) REFERENCES `Presence` (`presence_id`)
@@ -1028,9 +1052,9 @@ DROP TABLE IF EXISTS `Study`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Study`
 (
-    `study_id`      varchar(255) NOT NULL,
-    `national_park` int          DEFAULT NULL,
-    `researcher`    varchar(255) DEFAULT NULL,
+    `study_id`      int NOT NULL AUTO_INCREMENT,
+    `national_park` varchar(4)   DEFAULT NULL,
+    `researcher`    int          DEFAULT NULL,
     `type`          varchar(255) DEFAULT NULL,
     `duration`      datetime     DEFAULT NULL,
     PRIMARY KEY (`study_id`),
@@ -1063,8 +1087,8 @@ DROP TABLE IF EXISTS `Study_data`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Study_data`
 (
-    `study_id` varchar(255) NOT NULL,
-    `data_id`  varchar(255) NOT NULL,
+    `study_id` int NOT NULL,
+    `data_id`  int NOT NULL,
     PRIMARY KEY (`study_id`, `data_id`),
     KEY `data_id` (`data_id`),
     CONSTRAINT `Study_data_ibfk_1` FOREIGN KEY (`study_id`) REFERENCES `Study` (`study_id`),
@@ -1094,7 +1118,7 @@ DROP TABLE IF EXISTS `Study_species`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Study_species`
 (
-    `study_id`      varchar(255) NOT NULL,
+    `study_id`      int          NOT NULL,
     `genus`         varchar(255) NOT NULL,
     `specific_name` varchar(255) NOT NULL,
     PRIMARY KEY (`study_id`, `genus`, `specific_name`),
@@ -1126,7 +1150,7 @@ DROP TABLE IF EXISTS `Trail`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Trail`
 (
-    `feature_id`   varchar(255) NOT NULL,
+    `feature_id`   int          NOT NULL,
     `name`         varchar(255) NOT NULL,
     `length`       decimal(10, 0) DEFAULT NULL,
     `spatial_data` geometry       DEFAULT NULL,
@@ -1157,7 +1181,7 @@ DROP TABLE IF EXISTS `Transaction`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Transaction`
 (
-    `transaction_id`      int       NOT NULL,
+    `transaction_id`      int       NOT NULL AUTO_INCREMENT,
     `price`               int       NOT NULL,
     `date_of_transaction` timestamp NULL                                                                    DEFAULT (now()),
     `pay_method`          enum ('mobile transfer','credit card','net banking','cash','cheque','debit card') DEFAULT NULL,
@@ -1219,7 +1243,7 @@ DROP TABLE IF EXISTS `ViewPoints`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ViewPoints`
 (
-    `feature_id` varchar(255) NOT NULL,
+    `feature_id` int          NOT NULL,
     `name`       varchar(255) NOT NULL,
     PRIMARY KEY (`feature_id`),
     CONSTRAINT `ViewPoints_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
@@ -1248,20 +1272,20 @@ DROP TABLE IF EXISTS `Volunteer`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Volunteer`
 (
-    `volunteer_permit_id` int NOT NULL,
+    `volunteer_permit_id` int        NOT NULL AUTO_INCREMENT,
     `user_id`             int      DEFAULT NULL,
     `emp_incharge`        int      DEFAULT NULL,
     `dep_number`          int      DEFAULT NULL,
     `period`              datetime DEFAULT (now()),
     `job_description`     longtext,
-    `national_park`       int NOT NULL,
+    `national_park`       varchar(4) NOT NULL,
     PRIMARY KEY (`volunteer_permit_id`),
     KEY `user_id` (`user_id`),
     KEY `emp_incharge` (`emp_incharge`),
     KEY `national_park` (`national_park`, `dep_number`),
     CONSTRAINT `Volunteer_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    CONSTRAINT `Volunteer_ibfk_10` FOREIGN KEY (`national_park`, `dep_number`) REFERENCES `Department` (`contained_in`, `dep_number`),
-    CONSTRAINT `Volunteer_ibfk_12` FOREIGN KEY (`emp_incharge`) REFERENCES `Employee` (`emp_id`)
+    CONSTRAINT `Volunteer_ibfk_2` FOREIGN KEY (`national_park`, `dep_number`) REFERENCES `Department` (`contained_in`, `dep_number`),
+    CONSTRAINT `Volunteer_ibfk_3` FOREIGN KEY (`emp_incharge`) REFERENCES `Employee` (`emp_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1287,8 +1311,8 @@ DROP TABLE IF EXISTS `Zone`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Zone`
 (
-    `belongs_to`  int NOT NULL,
-    `zone_number` int NOT NULL,
+    `belongs_to`  varchar(4) NOT NULL,
+    `zone_number` int        NOT NULL,
     `contact`     varchar(15) DEFAULT NULL,
     PRIMARY KEY (`zone_number`, `belongs_to`),
     KEY `belongs_to` (`belongs_to`),
@@ -1318,8 +1342,8 @@ DROP TABLE IF EXISTS `Zone_contains`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Zone_contains`
 (
-    `zone_number` int          NOT NULL,
-    `feature_id`  varchar(255) NOT NULL,
+    `zone_number` int NOT NULL,
+    `feature_id`  int NOT NULL,
     PRIMARY KEY (`zone_number`, `feature_id`),
     KEY `feature_id` (`feature_id`),
     CONSTRAINT `Zone_contains_ibfk_1` FOREIGN KEY (`zone_number`) REFERENCES `Zone` (`zone_number`),
@@ -1349,13 +1373,13 @@ DROP TABLE IF EXISTS `Zone_terrain`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Zone_terrain`
 (
-    `naitonal_park` int                                                                    NOT NULL,
+    `national_park` varchar(4)                                                             NOT NULL,
     `zone_number`   int                                                                    NOT NULL,
     `terrain`       enum ('Marshland','Desert','Savannah','Mountainous','Forest','Tundra') NOT NULL,
-    PRIMARY KEY (`zone_number`, `terrain`, `naitonal_park`),
-    KEY `naitonal_park` (`naitonal_park`),
-    CONSTRAINT `Zone_terrain_ibfk_1` FOREIGN KEY (`zone_number`) REFERENCES `Zone` (`zone_number`),
-    CONSTRAINT `Zone_terrain_ibfk_2` FOREIGN KEY (`naitonal_park`) REFERENCES `National_Park` (`unit_code`)
+    PRIMARY KEY (`zone_number`, `terrain`, `national_park`),
+    KEY `national_park` (`national_park`),
+    KEY `Zone_terrain_ibfk_1` (`zone_number`, `national_park`),
+    CONSTRAINT `Zone_terrain_ibfk_1` FOREIGN KEY (`zone_number`, `national_park`) REFERENCES `Zone` (`zone_number`, `belongs_to`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1381,4 +1405,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-01 12:06:55
+-- Dump completed on 2020-10-03 11:05:28

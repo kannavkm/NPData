@@ -7,7 +7,10 @@ import src.species
 
 def insert():
     tmp = src.species.Species()
-    print(tmp.add())
+    res = tmp.add()
+    print("\n>>")
+    for i in res:
+        print(i)
 
 
 insert()

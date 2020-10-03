@@ -1,5 +1,5 @@
 venv/
-config.py
 .idea
 __pycache__
 .pytest_cache
+local

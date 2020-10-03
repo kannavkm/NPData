@@ -17,17 +17,17 @@ def perror(x):
     print(BgColor.WARNING + x + BgColor.ENDCLR)
 
 
-def repeat_and_error(func, func2=None):
+def rep(func, func2=None):
     def inner():
         if func2 is not None:
             func2()
-        for _ in range(1, 5):
+        for _ in range(3):
             try:
                 if func():
                     break
             except ValueError as e:
-                perror('Input not correct')
-            if _ == 4:
+                perror('Input is either null or does not match the type expected')
+            if _ == 2:
                 raise ValueError('Insertion Failed, too many wrong attempts')
 
     return inner

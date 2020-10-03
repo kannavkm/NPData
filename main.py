@@ -1,6 +1,6 @@
 import pymysql.cursors
 
-import config
+from local import config
 
 while True:
     try:
@@ -17,6 +17,7 @@ while True:
 
         if con.open:
             print("Connected")
+
         else:
             print("Failed to connect")
         tmp = input(">>>")

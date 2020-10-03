@@ -24,6 +24,15 @@ def validate_date(date):
         return False
 
 
+def validate_time(time):
+    try:
+        hour, minute, second = map(int, time.split(':'))
+        a = datetime.time(hour=hour, minute=minute, second=second)
+        return True
+    except ValueError:
+        return False
+
+
 def validate_range(x, lo, hi):
     if x < lo:
         return False
