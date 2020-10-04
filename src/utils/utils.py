@@ -17,7 +17,7 @@ def perror(x):
     print(BgColor.WARNING + x + BgColor.ENDCLR)
 
 
-def rep(func, func2=None):
+def repeat_and_error(func, func2=None):
     def inner():
         if func2 is not None:
             func2()

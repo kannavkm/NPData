@@ -117,13 +117,13 @@ class Species:
 
     def add(self):
         try:
-            rep(self.get_sci_name)()
-            rep(self.get_name)()
-            rep(self.get_taxon_information)()
-            rep(self.get_taxon_code)()
-            rep(self.get_vulnerability, self.vulnerability_options)()
-            rep(self.get_life_span)()
-            rep(self.get_common_names)()
+            repeat_and_error(self.get_sci_name)()
+            repeat_and_error(self.get_name)()
+            repeat_and_error(self.get_taxon_information)()
+            repeat_and_error(self.get_taxon_code)()
+            repeat_and_error(self.get_vulnerability, self.vulnerability_options)()
+            repeat_and_error(self.get_life_span)()
+            repeat_and_error(self.get_common_names)()
 
             q = []
 
