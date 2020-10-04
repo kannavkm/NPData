@@ -24,18 +24,15 @@ DROP TABLE IF EXISTS `Booking`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Booking`
 (
-    `booking_id`         int NOT NULL,
+    `booking_id`         int NOT NULL AUTO_INCREMENT,
     `user_id`            int NOT NULL,
     `number_of_adults`   int DEFAULT NULL,
     `number_of_children` int DEFAULT NULL,
-    `transaction_id`     int NOT NULL,
-    PRIMARY KEY (`booking_id`, `user_id`),
+    PRIMARY KEY (`booking_id`),
     KEY `user_id` (`user_id`),
-    KEY `transaction_id` (`transaction_id`),
-    CONSTRAINT `Booking_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `Booking_service` (`booking_id`),
-    CONSTRAINT `Booking_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    CONSTRAINT `Booking_ibfk_3` FOREIGN KEY (`transaction_id`) REFERENCES `Transaction` (`transaction_id`)
+    CONSTRAINT `Booking_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 22
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -47,6 +44,8 @@ CREATE TABLE `Booking`
 LOCK TABLES `Booking` WRITE;
 /*!40000 ALTER TABLE `Booking`
     DISABLE KEYS */;
+INSERT INTO `Booking`
+VALUES (1, 1, 1, 0);
 /*!40000 ALTER TABLE `Booking`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -60,12 +59,15 @@ DROP TABLE IF EXISTS `Booking_service`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Booking_service`
 (
-    `booking_id`     int NOT NULL AUTO_INCREMENT,
-    `sub_service_id` int DEFAULT NULL,
-    `price`          int NOT NULL,
-    PRIMARY KEY (`booking_id`),
+    `booking_id`     int  NOT NULL,
+    `sub_service_id` int  NOT NULL,
+    `price`          int  NOT NULL,
+    `target_date`    date NOT NULL,
+    PRIMARY KEY (`booking_id`, `sub_service_id`, `target_date`),
     KEY `sub_service_id` (`sub_service_id`),
-    CONSTRAINT `Booking_service_ibfk_1` FOREIGN KEY (`sub_service_id`) REFERENCES `Service_timings` (`sub_service_id`)
+    KEY `Booking_service_Sub_service_timings_sub_service_id_date_fk` (`sub_service_id`, `target_date`),
+    CONSTRAINT `Booking_service_Booking_booking_id_fk` FOREIGN KEY (`booking_id`) REFERENCES `Booking` (`booking_id`) ON DELETE CASCADE,
+    CONSTRAINT `Booking_service_Sub_service_timings_sub_service_id_date_fk` FOREIGN KEY (`sub_service_id`, `target_date`) REFERENCES `Sub_service_timings` (`sub_service_id`, `date`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -78,6 +80,9 @@ CREATE TABLE `Booking_service`
 LOCK TABLES `Booking_service` WRITE;
 /*!40000 ALTER TABLE `Booking_service`
     DISABLE KEYS */;
+INSERT INTO `Booking_service`
+VALUES (1, 1, 1200, '2020-10-05'),
+       (1, 2, 1000, '2020-10-06');
 /*!40000 ALTER TABLE `Booking_service`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -166,6 +171,7 @@ CREATE TABLE `Data`
     `data_type`   varchar(255) DEFAULT NULL,
     PRIMARY KEY (`data_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -177,6 +183,11 @@ CREATE TABLE `Data`
 LOCK TABLES `Data` WRITE;
 /*!40000 ALTER TABLE `Data`
     DISABLE KEYS */;
+INSERT INTO `Data`
+VALUES (1, 'Detailed study on great indian bustard and their behaviour', 'dat1.json', 'JSON'),
+       (2, 'Description on tigers found in India', 'dt1.json', 'JSON'),
+       (3, 'Behaviour of Snakes', 'dat2.xls', 'Excel'),
+       (4, 'Wildlife in Kanha National Park', 'dat3.xls', 'Excel');
 /*!40000 ALTER TABLE `Data`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -190,11 +201,10 @@ DROP TABLE IF EXISTS `Demography`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Demography`
 (
-    `presence_id`           int            NOT NULL,
-    `time_stamp`            timestamp      NOT NULL,
-    `total_population`      int            DEFAULT NULL,
-    `percent_of_lifespan`   decimal(10, 0) DEFAULT NULL,
-    `percent_of_population` decimal(10, 0) NOT NULL,
+    `presence_id`      int       NOT NULL,
+    `time_stamp`       timestamp NOT NULL,
+    `total_population` int            DEFAULT NULL,
+    `average_lifespan` decimal(10, 0) DEFAULT NULL,
     PRIMARY KEY (`presence_id`, `time_stamp`),
     CONSTRAINT `Demography_ibfk_1` FOREIGN KEY (`presence_id`) REFERENCES `Presence` (`presence_id`)
 ) ENGINE = InnoDB
@@ -209,6 +219,14 @@ CREATE TABLE `Demography`
 LOCK TABLES `Demography` WRITE;
 /*!40000 ALTER TABLE `Demography`
     DISABLE KEYS */;
+INSERT INTO `Demography`
+VALUES (1, '2018-01-01 16:30:00', 215, 12),
+       (1, '2020-10-04 06:00:19', 123, 12),
+       (1, '2020-10-04 06:01:57', 1212, 12),
+       (2, '2020-06-30 12:00:00', 28, 14),
+       (3, '2018-07-01 12:00:00', 30, 15),
+       (5, '2015-10-10 14:30:00', 44, 38),
+       (6, '2017-03-15 15:45:00', 24, 13);
 /*!40000 ALTER TABLE `Demography`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -242,6 +260,20 @@ CREATE TABLE `Department`
 LOCK TABLES `Department` WRITE;
 /*!40000 ALTER TABLE `Department`
     DISABLE KEYS */;
+INSERT INTO `Department`
+VALUES ('CRBT', 1, 'Administration', 6),
+       ('CRBT', 2, 'Maintainence', NULL),
+       ('CRBT', 3, 'Protection', 5),
+       ('CRBT', 4, 'Research', NULL),
+       ('KNHA', 1, 'Admin', NULL),
+       ('KNHA', 2, 'Research', NULL),
+       ('KNHA', 3, 'Maintainence', NULL),
+       ('KNHA', 4, 'Security', NULL),
+       ('KZRG', 1, 'Administration', NULL),
+       ('KZRG', 2, 'Protection', NULL),
+       ('KZRG', 3, 'Planning', NULL),
+       ('KZRG', 4, 'Maintainence', 7),
+       ('KZRG', 5, 'Research', NULL);
 /*!40000 ALTER TABLE `Department`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -270,6 +302,7 @@ CREATE TABLE `Employee`
     KEY `national_park` (`national_park`, `works_for_dno`),
     CONSTRAINT `Employee_ibfk_1` FOREIGN KEY (`national_park`, `works_for_dno`) REFERENCES `Department` (`contained_in`, `dep_number`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 9
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -281,6 +314,20 @@ CREATE TABLE `Employee`
 LOCK TABLES `Employee` WRITE;
 /*!40000 ALTER TABLE `Employee`
     DISABLE KEYS */;
+INSERT INTO `Employee`
+VALUES (1, 'Michael Scott', '1977-01-01', '9321929192', 'Mike@email.com', 'Male', '2004-01-01', 'Supervisor', 1,
+        'KZRG'),
+       (2, 'James Halpert', '1999-01-01', '9399929192', 'jamesHap@email.com', 'Male', '2003-01-01', 'Ranger', 2,
+        'KZRG'),
+       (4, 'Pam', '1999-01-01', '9998989192', 'PamBeesly@email.com', 'Female', '2014-01-01', 'Director', 1, 'KNHA'),
+       (5, 'Dwight', '1993-01-01', '9999999999', 'DwightDangerSchrute@email.com', 'Male', '2004-03-01', 'Manager', 3,
+        'CRBT'),
+       (6, 'Ben Wyatt', '1992-01-01', '3712893219', 'calzonesrule@email.com', 'Male', '2004-01-01', 'Head of planning',
+        3, 'KNHA'),
+       (7, 'Leslie Knope', '1999-01-01', '9399919212', 'lesterknopf@email.com', 'Female', '2000-01-01', 'Parks Person',
+        1, 'CRBT'),
+       (8, 'April Ludgate', '1992-01-01', '9399991921', 'jackolantern@email.com', 'Female', '2017-01-01', 'Evil Hag', 4,
+        'KZRG');
 /*!40000 ALTER TABLE `Employee`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -342,7 +389,7 @@ CREATE TABLE `Feature_Feedback`
     PRIMARY KEY (`user_id`),
     KEY `feature_id` (`feature_id`),
     CONSTRAINT `Feature_Feedback_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    CONSTRAINT `Feature_Feedback_ibfk_4` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
+    CONSTRAINT `Feature_Feedback_ibfk_4` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -372,7 +419,7 @@ CREATE TABLE `Feature_images`
     `image_id`   int NOT NULL,
     `image`      longblob,
     PRIMARY KEY (`feature_id`, `image_id`),
-    CONSTRAINT `Feature_images_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
+    CONSTRAINT `Feature_images_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -401,8 +448,7 @@ CREATE TABLE `Features`
     `feature_id`   int          NOT NULL AUTO_INCREMENT,
     `feature_name` varchar(255) NOT NULL,
     `availability` int          DEFAULT NULL,
-    `latitude`     varchar(255) DEFAULT NULL,
-    `longitude`    varchar(255) DEFAULT NULL,
+    `geohash`      varchar(255) DEFAULT NULL,
     PRIMARY KEY (`feature_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -552,6 +598,12 @@ CREATE TABLE `National_Park`
 LOCK TABLES `National_Park` WRITE;
 /*!40000 ALTER TABLE `National_Park`
     DISABLE KEYS */;
+INSERT INTO `National_Park`
+VALUES ('CRBT', 'Jim Corbet National Park', 'UK', NULL, 29.548599, 78.935303),
+       ('KLDO', 'Keoladeo National Park', 'RJ', NULL, 27.159269, 77.523200),
+       ('KNHA', 'Kanha National Park', 'MP', NULL, 22.333333, 80.633333),
+       ('KZRG', 'Kaziranga National Park', 'AS', NULL, 26.575863, 93.167046),
+       ('MNAS', 'Manas National Park', 'AS', NULL, 26.659424, 91.001129);
 /*!40000 ALTER TABLE `National_Park`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -607,6 +659,7 @@ CREATE TABLE `Permit`
     `permit_expiration_date` date NOT NULL,
     PRIMARY KEY (`permit_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 11
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -618,6 +671,17 @@ CREATE TABLE `Permit`
 LOCK TABLES `Permit` WRITE;
 /*!40000 ALTER TABLE `Permit`
     DISABLE KEYS */;
+INSERT INTO `Permit`
+VALUES (1, '2024-02-28'),
+       (2, '2022-04-15'),
+       (3, '2023-10-10'),
+       (4, '2023-01-31'),
+       (5, '2022-12-01'),
+       (6, '2020-12-31'),
+       (7, '2021-05-07'),
+       (8, '2021-09-15'),
+       (9, '2020-10-30'),
+       (10, '2023-06-20');
 /*!40000 ALTER TABLE `Permit`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -647,6 +711,7 @@ CREATE TABLE `Presence`
     CONSTRAINT `Presence_ibfk_1` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`),
     CONSTRAINT `Presence_ibfk_2` FOREIGN KEY (`genus`, `specific_name`) REFERENCES `Species` (`genus`, `specific_name`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 8
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -658,6 +723,14 @@ CREATE TABLE `Presence`
 LOCK TABLES `Presence` WRITE;
 /*!40000 ALTER TABLE `Presence`
     DISABLE KEYS */;
+INSERT INTO `Presence`
+VALUES (1, 'Panthera', 'tigris', 'CRBT', 1, 1, 'uncommon', 'Verified', '2010-06-30 12:00:00', 'Full Year'),
+       (2, 'Panthera', 'tigris', 'KLDO', 1, 1, 'rare', 'Verified', '2015-01-31 15:00:00', 'Full Year'),
+       (3, 'Panthera', 'tigris', 'MNAS', 1, 1, 'rare', 'Non Verified', '2020-09-30 18:00:00', 'Seasonal'),
+       (4, 'Ficus', 'religiosa', 'KNHA', 1, 0, 'common', 'Verified', '2016-12-31 08:00:00', 'Full Year'),
+       (5, 'Python', 'molurus', 'KLDO', 1, 0, 'uncommon', 'Non Verified', '2015-08-20 09:45:00', 'Seasonal'),
+       (6, 'Ardeotis', 'nigriceps', 'KLDO', 1, 1, 'rare', 'Non Verified', '2010-10-10 13:00:00', 'Seasonal'),
+       (7, 'Python', 'molurus', 'KNHA', 1, 0, 'uncommon', 'Verified', '2018-11-15 12:45:00', 'Full Year');
 /*!40000 ALTER TABLE `Presence`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -735,7 +808,7 @@ CREATE TABLE `Report`
     PRIMARY KEY (`report_title`, `parent_data`),
     KEY `parent_data` (`parent_data`),
     KEY `publishing_status` (`publishing_status`),
-    CONSTRAINT `Report_ibfk_1` FOREIGN KEY (`parent_data`) REFERENCES `Data` (`data_id`),
+    CONSTRAINT `Report_ibfk_1` FOREIGN KEY (`parent_data`) REFERENCES `Data` (`data_id`) ON DELETE CASCADE,
     CONSTRAINT `Report_ibfk_2` FOREIGN KEY (`publishing_status`) REFERENCES `Published` (`ISBN_number`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -803,6 +876,7 @@ CREATE TABLE `Researcher`
     KEY `permit` (`permit`),
     CONSTRAINT `Researcher_ibfk_1` FOREIGN KEY (`permit`) REFERENCES `Permit` (`permit_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -814,6 +888,12 @@ CREATE TABLE `Researcher`
 LOCK TABLES `Researcher` WRITE;
 /*!40000 ALTER TABLE `Researcher`
     DISABLE KEYS */;
+INSERT INTO `Researcher`
+VALUES (1, 'Sarah Resendes', '7343976663', 'sarahresendes1411@rediff.com', 'Franklin and Marshall College', 1),
+       (2, 'Sunday Holladay', '8588261321', 'holladay.sunday@gmail.com', 'Brigham Young University', 2),
+       (3, 'Joey Mershon', '5564105941', 'joeymer12@yahoo.com', 'University of Texas, Austin', 3),
+       (4, 'Chuck Colpitts', '6653294177', 'chuck23@hotmail.com', 'University of California, Berkeley', 4),
+       (5, 'Jesusa Touchton', '8778670185', 'touchtonjesusa@gmail.com', 'Grinnell College', 5);
 /*!40000 ALTER TABLE `Researcher`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -831,7 +911,7 @@ CREATE TABLE `Service_Feature`
     `feature_id` int NOT NULL,
     PRIMARY KEY (`service_id`, `feature_id`),
     KEY `feature_id` (`feature_id`),
-    CONSTRAINT `Service_Feature_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`),
+    CONSTRAINT `Service_Feature_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`) ON DELETE CASCADE,
     CONSTRAINT `Service_Feature_ibfk_2` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -860,13 +940,13 @@ CREATE TABLE `Service_Feedback`
 (
     `user_id`    int NOT NULL,
     `service_id` int NOT NULL,
-    `rating`     decimal(10, 0) DEFAULT NULL COMMENT 'between 1 and 5',
+    `rating`     int      DEFAULT NULL COMMENT 'between 1 and 5',
     `remarks`    longtext,
-    `date`       datetime       DEFAULT NULL,
+    `date`       datetime DEFAULT NULL,
     PRIMARY KEY (`user_id`, `service_id`),
     KEY `service_id` (`service_id`),
-    CONSTRAINT `Service_Feedback_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    CONSTRAINT `Service_Feedback_ibfk_5` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`)
+    CONSTRAINT `Service_Feedback_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE,
+    CONSTRAINT `Service_Feedback_ibfk_5` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -879,39 +959,10 @@ CREATE TABLE `Service_Feedback`
 LOCK TABLES `Service_Feedback` WRITE;
 /*!40000 ALTER TABLE `Service_Feedback`
     DISABLE KEYS */;
+INSERT INTO `Service_Feedback`
+VALUES (6, 1, 5, 'great! Try next time plz.', '2020-10-04 12:34:34'),
+       (6, 2, 3, 'No good, water', '2020-10-04 12:34:34');
 /*!40000 ALTER TABLE `Service_Feedback`
-    ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Service_timings`
---
-
-DROP TABLE IF EXISTS `Service_timings`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Service_timings`
-(
-    `sub_service_id` int NOT NULL AUTO_INCREMENT,
-    `service_id`     int                                                                           DEFAULT NULL,
-    `timings`        time                                                                          DEFAULT NULL,
-    `day_of_service` enum ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
-    PRIMARY KEY (`sub_service_id`),
-    KEY `service_id` (`service_id`),
-    CONSTRAINT `Service_timings_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Service_timings`
---
-
-LOCK TABLES `Service_timings` WRITE;
-/*!40000 ALTER TABLE `Service_timings`
-    DISABLE KEYS */;
-/*!40000 ALTER TABLE `Service_timings`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -924,17 +975,15 @@ DROP TABLE IF EXISTS `Services`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Services`
 (
-    `service_id`   int            NOT NULL AUTO_INCREMENT,
-    `name`         varchar(255)   NOT NULL,
-    `availability` int        DEFAULT NULL,
-    `capacity`     int        DEFAULT NULL,
-    `price`        decimal(10, 0) NOT NULL,
-    `description`  longtext,
-    `provided_by`  varchar(4) DEFAULT NULL,
+    `service_id`  int          NOT NULL AUTO_INCREMENT,
+    `name`        varchar(255) NOT NULL,
+    `description` longtext,
+    `provided_by` varchar(4) DEFAULT NULL,
     PRIMARY KEY (`service_id`),
     KEY `provided_by` (`provided_by`),
     CONSTRAINT `Services_ibfk_1` FOREIGN KEY (`provided_by`) REFERENCES `National_Park` (`unit_code`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -946,6 +995,11 @@ CREATE TABLE `Services`
 LOCK TABLES `Services` WRITE;
 /*!40000 ALTER TABLE `Services`
     DISABLE KEYS */;
+INSERT INTO `Services`
+VALUES (1, 'Safari', 'this is first safari', 'CRBT'),
+       (2, 'Safari 2', 'This is the second safari', 'CRBT'),
+       (3, 'trekking', 'This is first trekking', 'KNHA'),
+       (4, 'sight seeing tour', 'This the first sightseeing', 'KZRG');
 /*!40000 ALTER TABLE `Services`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -981,6 +1035,14 @@ CREATE TABLE `Species`
 LOCK TABLES `Species` WRITE;
 /*!40000 ALTER TABLE `Species`
     DISABLE KEYS */;
+INSERT INTO `Species`
+VALUES ('Ardeotis', 'nigriceps', '172692', 'Great Indian Bustard', 'Critically Endangered', 12),
+       ('Ficus', 'religiosa', '66387', 'Peepal Tree', 'Least Concern', 1000),
+       ('Leptoptilos', 'dubius', '1940340', 'Greater adjutant', 'Endangered', 35),
+       ('Panthera', 'leo', '83386', 'Asiatic lion', 'Endangered', 18),
+       ('Panthera', 'tigris', '74535', 'Royal Bengal Tiger', 'Endangered', 10),
+       ('Python', 'molurus', '621282', 'Indian rock python', 'Vulnerable', 38),
+       ('Saraca', 'asoca', '1073321', 'Ashoka Tree', 'Vulnerable', 50);
 /*!40000 ALTER TABLE `Species`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1039,6 +1101,14 @@ CREATE TABLE `Species_names`
 LOCK TABLES `Species_names` WRITE;
 /*!40000 ALTER TABLE `Species_names`
     DISABLE KEYS */;
+INSERT INTO `Species_names`
+VALUES ('Asiatic Lion', 'Lion'),
+       ('Asiatic Lion', 'Sher'),
+       ('Great Indian Bustard', 'Indian bustard'),
+       ('Peepal tree', 'ashwattha tree'),
+       ('Peepal tree', 'bodhi tree'),
+       ('Royal Bengal Tiger', 'Baagh'),
+       ('Royal Bengal Tiger', 'Bengal Tiger');
 /*!40000 ALTER TABLE `Species_names`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1056,13 +1126,14 @@ CREATE TABLE `Study`
     `national_park` varchar(4)   DEFAULT NULL,
     `researcher`    int          DEFAULT NULL,
     `type`          varchar(255) DEFAULT NULL,
-    `duration`      datetime     DEFAULT NULL,
+    `start_date`    date         DEFAULT NULL,
     PRIMARY KEY (`study_id`),
     KEY `national_park` (`national_park`),
     KEY `researcher` (`researcher`),
     CONSTRAINT `Study_ibfk_1` FOREIGN KEY (`researcher`) REFERENCES `Researcher` (`researcher_id`),
     CONSTRAINT `Study_ibfk_2` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1074,6 +1145,10 @@ CREATE TABLE `Study`
 LOCK TABLES `Study` WRITE;
 /*!40000 ALTER TABLE `Study`
     DISABLE KEYS */;
+INSERT INTO `Study`
+VALUES (1, 'KNHA', 3, 'Case Study', '2016-03-10'),
+       (2, 'CRBT', 4, 'Correlational Study', '2018-07-01'),
+       (3, 'KLDO', 1, 'Experimental Study', '2015-10-15');
 /*!40000 ALTER TABLE `Study`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1091,8 +1166,8 @@ CREATE TABLE `Study_data`
     `data_id`  int NOT NULL,
     PRIMARY KEY (`study_id`, `data_id`),
     KEY `data_id` (`data_id`),
-    CONSTRAINT `Study_data_ibfk_1` FOREIGN KEY (`study_id`) REFERENCES `Study` (`study_id`),
-    CONSTRAINT `Study_data_ibfk_2` FOREIGN KEY (`data_id`) REFERENCES `Data` (`data_id`)
+    CONSTRAINT `Study_data_ibfk_1` FOREIGN KEY (`study_id`) REFERENCES `Study` (`study_id`) ON DELETE CASCADE,
+    CONSTRAINT `Study_data_ibfk_2` FOREIGN KEY (`data_id`) REFERENCES `Data` (`data_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1105,6 +1180,11 @@ CREATE TABLE `Study_data`
 LOCK TABLES `Study_data` WRITE;
 /*!40000 ALTER TABLE `Study_data`
     DISABLE KEYS */;
+INSERT INTO `Study_data`
+VALUES (3, 1),
+       (3, 2),
+       (1, 3),
+       (2, 4);
 /*!40000 ALTER TABLE `Study_data`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1137,7 +1217,99 @@ CREATE TABLE `Study_species`
 LOCK TABLES `Study_species` WRITE;
 /*!40000 ALTER TABLE `Study_species`
     DISABLE KEYS */;
+INSERT INTO `Study_species`
+VALUES (3, 'Ardeotis', 'nigriceps'),
+       (1, 'Panthera', 'tigris'),
+       (3, 'Panthera', 'tigris'),
+       (1, 'Python', 'molurus'),
+       (2, 'Python', 'molurus');
 /*!40000 ALTER TABLE `Study_species`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Sub_service`
+--
+
+DROP TABLE IF EXISTS `Sub_service`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Sub_service`
+(
+    `sub_service_id` int NOT NULL AUTO_INCREMENT,
+    `service_id`     int  DEFAULT NULL,
+    `timings`        time DEFAULT NULL,
+    PRIMARY KEY (`sub_service_id`),
+    KEY `service_id` (`service_id`),
+    CONSTRAINT `Sub_service_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`) ON DELETE CASCADE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Sub_service`
+--
+
+LOCK TABLES `Sub_service` WRITE;
+/*!40000 ALTER TABLE `Sub_service`
+    DISABLE KEYS */;
+INSERT INTO `Sub_service`
+VALUES (1, 1, '10:00:00'),
+       (2, 1, '16:00:00'),
+       (3, 2, '20:00:00'),
+       (4, 4, NULL);
+/*!40000 ALTER TABLE `Sub_service`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Sub_service_timings`
+--
+
+DROP TABLE IF EXISTS `Sub_service_timings`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Sub_service_timings`
+(
+    `sub_service_id` int  NOT NULL,
+    `availability`   int            DEFAULT NULL,
+    `capacity`       int            DEFAULT NULL,
+    `date`           date NOT NULL,
+    `price`          decimal(10, 2) DEFAULT NULL,
+    PRIMARY KEY (`sub_service_id`, `date`),
+    CONSTRAINT `Sub_service_timings_Sub_service_sub_service_id_fk` FOREIGN KEY (`sub_service_id`) REFERENCES `Sub_service` (`sub_service_id`) ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Sub_service_timings`
+--
+
+LOCK TABLES `Sub_service_timings` WRITE;
+/*!40000 ALTER TABLE `Sub_service_timings`
+    DISABLE KEYS */;
+INSERT INTO `Sub_service_timings`
+VALUES (1, 40, 40, '2020-10-04', 1000.00),
+       (1, 40, 44, '2020-10-05', 1200.00),
+       (1, 40, 40, '2020-10-06', 1000.00),
+       (1, 40, 40, '2020-10-07', 1000.00),
+       (1, 40, 40, '2020-10-08', 1000.00),
+       (1, 40, 44, '2020-10-09', 1200.00),
+       (1, 40, 40, '2020-10-10', 1000.00),
+       (1, 40, 40, '2020-10-11', 1000.00),
+       (2, 12, 12, '2020-10-04', 1000.00),
+       (2, 12, 12, '2020-10-05', 1200.00),
+       (2, 11, 12, '2020-10-06', 1000.00),
+       (2, 12, 12, '2020-10-07', 1000.00),
+       (2, 12, 12, '2020-10-08', 1000.00),
+       (2, 12, 12, '2020-10-09', 1200.00),
+       (2, 12, 12, '2020-10-10', 1000.00),
+       (2, 40, 40, '2020-10-11', 1000.00);
+/*!40000 ALTER TABLE `Sub_service_timings`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1155,7 +1327,7 @@ CREATE TABLE `Trail`
     `length`       decimal(10, 0) DEFAULT NULL,
     `spatial_data` geometry       DEFAULT NULL,
     PRIMARY KEY (`feature_id`),
-    CONSTRAINT `Trail_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
+    CONSTRAINT `Trail_ibfk_1` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1183,10 +1355,14 @@ CREATE TABLE `Transaction`
 (
     `transaction_id`      int       NOT NULL AUTO_INCREMENT,
     `price`               int       NOT NULL,
-    `date_of_transaction` timestamp NULL                                                                    DEFAULT (now()),
+    `date_of_transaction` timestamp NULL                                                                    DEFAULT NULL,
     `pay_method`          enum ('mobile transfer','credit card','net banking','cash','cheque','debit card') DEFAULT NULL,
-    PRIMARY KEY (`transaction_id`)
+    `booking_id`          int                                                                               DEFAULT NULL,
+    PRIMARY KEY (`transaction_id`),
+    KEY `Transaction_Booking_booking_id_fk` (`booking_id`),
+    CONSTRAINT `Transaction_Booking_booking_id_fk` FOREIGN KEY (`booking_id`) REFERENCES `Booking` (`booking_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1198,6 +1374,8 @@ CREATE TABLE `Transaction`
 LOCK TABLES `Transaction` WRITE;
 /*!40000 ALTER TABLE `Transaction`
     DISABLE KEYS */;
+INSERT INTO `Transaction`
+VALUES (1, 2200, '2020-10-04 10:07:17', 'cheque', 1);
 /*!40000 ALTER TABLE `Transaction`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1211,14 +1389,16 @@ DROP TABLE IF EXISTS `User`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `User`
 (
-    `user_id`        int          NOT NULL,
+    `user_id`        int          NOT NULL AUTO_INCREMENT,
     `username`       varchar(255) NOT NULL,
     `email`          varchar(255) NOT NULL,
     `password`       varchar(255) NOT NULL,
     `contact_number` varchar(15) DEFAULT NULL,
+    `date_of_birth`  date        DEFAULT NULL,
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 7
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1230,6 +1410,13 @@ CREATE TABLE `User`
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User`
     DISABLE KEYS */;
+INSERT INTO `User`
+VALUES (1, 'Mekhi Schmeler', 'lindgren.ezra@morrlibsu.ga', 'abcd', '4358822482', '2020-10-15'),
+       (2, 'Jalen Barton', 'fhettinger@noblechevy.com', 'abcd', '2054577447', '2020-10-20'),
+       (3, 'Favian Nolan', 'aliya45@meliece.com', 'abcd', '8242065279', '2020-10-14'),
+       (4, 'Fritz Lockman', 'eyon.wehner@malomies.com', 'abcd', '2751300966', '2020-10-23'),
+       (5, 'Lane Von', 'kjast@kingleo.us', 'abcd', '3847866482', '2020-10-30'),
+       (6, 'kannav mehta', 'kannav@email.com', 'abcd', '1234567890', '2000-01-01');
 /*!40000 ALTER TABLE `User`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1316,7 +1503,7 @@ CREATE TABLE `Zone`
     `contact`     varchar(15) DEFAULT NULL,
     PRIMARY KEY (`zone_number`, `belongs_to`),
     KEY `belongs_to` (`belongs_to`),
-    CONSTRAINT `Zone_ibfk_1` FOREIGN KEY (`belongs_to`) REFERENCES `National_Park` (`unit_code`)
+    CONSTRAINT `Zone_ibfk_1` FOREIGN KEY (`belongs_to`) REFERENCES `National_Park` (`unit_code`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1329,6 +1516,13 @@ CREATE TABLE `Zone`
 LOCK TABLES `Zone` WRITE;
 /*!40000 ALTER TABLE `Zone`
     DISABLE KEYS */;
+INSERT INTO `Zone`
+VALUES ('CRBT', 1, '999999999'),
+       ('KNHA', 1, '932787833'),
+       ('KZRG', 1, '932032131'),
+       ('CRBT', 2, '993009833'),
+       ('KNHA', 2, '932232132'),
+       ('CRBT', 3, '898329833');
 /*!40000 ALTER TABLE `Zone`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1346,7 +1540,7 @@ CREATE TABLE `Zone_contains`
     `feature_id`  int NOT NULL,
     PRIMARY KEY (`zone_number`, `feature_id`),
     KEY `feature_id` (`feature_id`),
-    CONSTRAINT `Zone_contains_ibfk_1` FOREIGN KEY (`zone_number`) REFERENCES `Zone` (`zone_number`),
+    CONSTRAINT `Zone_contains_ibfk_1` FOREIGN KEY (`zone_number`) REFERENCES `Zone` (`zone_number`) ON DELETE CASCADE,
     CONSTRAINT `Zone_contains_ibfk_2` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -1379,7 +1573,7 @@ CREATE TABLE `Zone_terrain`
     PRIMARY KEY (`zone_number`, `terrain`, `national_park`),
     KEY `national_park` (`national_park`),
     KEY `Zone_terrain_ibfk_1` (`zone_number`, `national_park`),
-    CONSTRAINT `Zone_terrain_ibfk_1` FOREIGN KEY (`zone_number`, `national_park`) REFERENCES `Zone` (`zone_number`, `belongs_to`)
+    CONSTRAINT `Zone_terrain_ibfk_1` FOREIGN KEY (`zone_number`, `national_park`) REFERENCES `Zone` (`zone_number`, `belongs_to`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1392,6 +1586,12 @@ CREATE TABLE `Zone_terrain`
 LOCK TABLES `Zone_terrain` WRITE;
 /*!40000 ALTER TABLE `Zone_terrain`
     DISABLE KEYS */;
+INSERT INTO `Zone_terrain`
+VALUES ('CRBT', 1, 'Marshland'),
+       ('CRBT', 1, 'Forest'),
+       ('KNHA', 2, 'Desert'),
+       ('KNHA', 2, 'Savannah'),
+       ('KZRG', 1, 'Mountainous');
 /*!40000 ALTER TABLE `Zone_terrain`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1405,4 +1605,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-03 11:05:28
+-- Dump completed on 2020-10-04 19:01:58

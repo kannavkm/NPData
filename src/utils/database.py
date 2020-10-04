@@ -33,4 +33,5 @@ class Database:
             except Exception as e:
                 self.con.rollback()
                 perror("Failed to execute the operation", e)
-                print(">>>>>>>>>>>>>", e)
+                return False
+        return True
