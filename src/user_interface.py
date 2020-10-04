@@ -3,12 +3,11 @@ from src.utils.utils import *
 
 
 class User:
-    def __init__(self, db):
+    def __init__(self):
         self.username = None
         self.email = None
         self.password = None
         self.contact_number = None
-        self.db = db
 
     def get_name(self):
         self.username = input("Enter Username: ").lower()
@@ -48,9 +47,35 @@ class User:
             repeat_and_error(self.get_name)()
             repeat_and_error(self.get_password)()
 
-            query = "SELECT * FROM user WHERE username='{}' AND password = '{}';".format(self.username, self.password)
+            query = "SELECT * FROM User WHERE username='{}' AND password = '{}';".format(self.username, self.password)
 
-            self.db.execute(query)
+            return query
 
-        except ValueError as e:
+        except Exception as e:
             print(e)
+
+    # def book(self):
+    #     try:
+
+
+class UserInterface:
+    def __init__(self, db):
+        self.current_user = User()
+        self.db = db
+
+    def login_user(self):
+        query = self.current_user.login()
+
+        rows = self.db.get_result(query)
+
+        if len(rows) == 1:
+            self.current_user = rows
+            return True
+        else:
+            perror("Not a valid User, try again")
+            return False
+
+    def loop(self):
+        while True:
+            if self.login_user():
+                break

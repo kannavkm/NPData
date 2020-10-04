@@ -1,11 +1,13 @@
 import pymysql.cursors
 
 from local import config
+from src.utils.utils import perror, psuccess
 
 
 class Database:
     def __init__(self):
         self.con = None
+        self.cur = None
 
     def open_connection(self):
         self.con = pymysql.connect(
@@ -18,6 +20,17 @@ class Database:
         )
         return self.con
 
+    def get_result(self, query):
+        self.cur.execute(query)
+        return self.cur.fetchall()
+
     def execute_query(self, query):
-        for q in query:
-            self.con.execute(q)
+        for qr in query:
+            try:
+                self.cur.execute(qr)
+                self.con.commit()
+                psuccess("Success")
+            except Exception as e:
+                self.con.rollback()
+                perror("Failed to execute the operation", e)
+                print(">>>>>>>>>>>>>", e)

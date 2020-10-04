@@ -22,16 +22,14 @@ while True:
 
         tmp = input(">>>")
 
-        with np.con.cursor() as cur:
+        with np.con.cursor() as np.cur:
             while True:
                 tmp = sp.call('clear', shell=True)
-                ch = int(input("Enter choice> "))
+
                 tmp = sp.call('clear', shell=True)
-                if ch >= 100:
-                    break
-                else:
-                    tmp = input("Enter any key to CONTINUE> ")
+                tmp = input("Enter any key to CONTINUE> ")
 
     except pymysql.err.OperationalError as e:
         print(e.args[0], ':', e.args[1])
         tmp = input(">>>")
+
