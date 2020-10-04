@@ -14,15 +14,6 @@ class Species:
         'Data Deficient'
     ]
 
-    habitat_enum = [
-        'Marshland',
-        'Desert',
-        'Savannah',
-        'Mountainous',
-        'Forest',
-        'Tundra'
-    ]
-
     def __init__(self):
         self.genus = None
         self.specific_name = None
@@ -34,8 +25,6 @@ class Species:
         self._class = None
         self.order = None
         self.family = None
-        self.common_names = None
-        self.habitats = None
 
     def get_sci_name(self):
         self.genus, self.specific_name = input("Enter the scientific Name of the Species:").split()
@@ -56,26 +45,6 @@ class Species:
             perror("Common name cannot be null")
         return False
 
-    def get_common_names(self):
-        self.common_names = input("Enter a comma separated list of common names").split(",")
-        temp = []
-        for name in self.common_names:
-            name = name.strip().lower()
-            if syntax.empty(name):
-                perror('Empty name not allowed')
-                return False
-            temp.append(name)
-        self.common_names = temp
-        return True
-
-    def get_habitat(self):
-        self.habitats = input("Enter a comma separated list of habitats").split(',')
-        temp = []
-        for habitat in self.habitats:
-            name = int(habitat.strip().lower())
-            temp.append(name)
-        return True
-
     def get_taxon_code(self):
         self.taxonomy_code = input("Enter the taxonomy-code of the Species:")
         if not syntax.empty(self.taxonomy_code):
@@ -93,10 +62,10 @@ class Species:
             print('{}. {}'.format(i + 1, self.vulnerability_enum[i]))
 
     def get_vulnerability(self):
-        self.vulnerability = int(input('Enter the corresponding option for the vulnerability status of the species:'))
+        self.vulnerability = int(
+            input('Enter the corresponding option for the vulnerability status of the species:'))
         if not syntax.validate_range(self.vulnerability, 1, len(self.vulnerability_enum)):
             perror("must be from one of the options")
-            return False
         else:
             return True
 
@@ -110,7 +79,8 @@ class Species:
         return True
 
     def get_life_span(self):
-        self.average_lifespan = float(input('Enter the average lifespan in years, negative if unknown:'))
+        self.average_lifespan = float(
+            input('Enter the average lifespan in years, negative if unknown:'))
         if self.average_lifespan < 0:
             self.average_lifespan = 'NULL'
         return True
@@ -123,36 +93,36 @@ class Species:
             repeat_and_error(self.get_taxon_code)()
             repeat_and_error(self.get_vulnerability, self.vulnerability_options)()
             repeat_and_error(self.get_life_span)()
-            repeat_and_error(self.get_common_names)()
 
             q = []
 
-            query = "INSERT INTO Kingdom_classification(kingdom, class) values('{}', '{}')".format(self.kingdom,
-                                                                                                   self._class)
+            query = "INSERT INTO Kingdom_classification(kingdom, class) values('{}', '{}')".format(
+                self.kingdom,
+                self._class)
             q.append(query)
 
-            query = "INSERT INTO Class_classification(class, order) values('{}', '{}')".format(self._class,
-                                                                                               self.order)
+            query = "INSERT INTO Class_classification(class, order) values('{}', '{}')".format(
+                self._class,
+                self.order)
             q.append(query)
 
-            query = "INSERT INTO Order_classification(order, family) values('{}', '{}')".format(self.order,
-                                                                                                self.family)
+            query = "INSERT INTO Order_classification(order, family) values('{}', '{}')".format(
+                self.order,
+                self.family)
             q.append(query)
 
-            query = "INSERT INTO Family_classification(family, genus) values('{}', '{}')".format(self.family,
-                                                                                                 self.genus)
+            query = "INSERT INTO Family_classification(family, genus) values('{}', '{}')".format(
+                self.family,
+                self.genus)
             q.append(query)
 
-            query = "INSERT INTO Species(genus, specific_name, taxonomy_code, name, vulnerability, average_lifespan)" \
-                    "VALUES('{}', '{}', '{}', '{}', '{}', {})".format(self.genus, self.specific_name, self.name,
-                                                                      self.taxonomy_code,
-                                                                      self.vulnerability_enum[self.vulnerability - 1],
-                                                                      self.average_lifespan)
+            query = "INSERT INTO Species(genus, specific_name, taxonomy_code, name," \
+                    " vulnerability, average_lifespan)" \
+                    "VALUES('{}', '{}', '{}', '{}', {})".format(self.genus, self.specific_name,
+                                                                self.taxonomy_code,
+                                                                self.vulnerability,
+                                                                self.average_lifespan)
             q.append(query)
-
-            for name in self.common_names:
-                query = "INSERT INTO Species_names(name, common_name) VALUES ('{}', '{}')".format(self.name, name)
-                q.append(query)
 
             return q
 
