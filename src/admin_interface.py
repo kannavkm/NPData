@@ -123,8 +123,6 @@ class AdminInterface:
                 "WHERE national_park = '{}' AND genus = '{}' AND specific_name = '{}') " \
             .format(newvalue, self.national_park, genus, spec_name)
 
-        print(tabulate(rows, headers="keys",
-                       showindex="always", tablefmt="fancy_grid"))
         self.db.execute_query(query)
         ans = input('Press ENTER to continue')
 
