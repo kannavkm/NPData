@@ -1,4 +1,3 @@
-import src.utils.syntax_check as syntax
 from src.utils.utils import *
 
 
@@ -168,6 +167,7 @@ class Presence:
 		self.record_status = None
 		self.record_date = None
 		self.occurrence = None
+		self.current_population = None
 
 	def get_nativeness(self):
 		spicyfood = input("Is the species native? True or False?")
@@ -195,8 +195,7 @@ class Presence:
 			print('{}. {}'.format(i + 1, self.abundance_enum[i]))
 
 	def get_abundance(self):
-		self.abundance = int(
-			input('Enter the corresponding option for the abundance status of the species:'))
+		self.abundance = to_int(input('Enter the corresponding option for the abundance status of the species:'))
 
 	def record_status_options(self):
 		print("Choose one among the record statuses of the species:")
@@ -204,7 +203,7 @@ class Presence:
 			print('{}. {}'.format(i + 1, self.record_status_enum[i]))
 
 	def get_record_status(self):
-		self.record_status = int(
+		self.record_status = to_int(
 			input('Enter the corresponding option for the record status of the species:'))
 
 	def get_record_date(self):
@@ -216,8 +215,10 @@ class Presence:
 			print('{}. {}'.format(i + 1, self.occurrence_enum[i]))
 
 	def get_occurrence(self):
-		self.occurrence = int(
-			input('Enter the corresponding option for the occurrence values of the species:'))
+		self.occurrence = to_int(input('Enter the corresponding option for the occurrence values of the species:'))
+
+	def get_population(self):
+		self.current_population = int(input('Enter the current population of the species in the National Park:'))
 
 	def add(self):
 		try:
@@ -227,15 +228,49 @@ class Presence:
 			ask(self.get_abundance, self.abundance_options)()
 			ask(self.get_record_date)()
 			ask(self.get_occurrence, self.occurrence_options)()
+			ask(self.get_population())
 
 			if self.record_status is not None:
-				self.record_status = self.record_status_enum[self.record_status]
+				self.record_status = self.record_status_enum[self.record_status - 1]
 
 			if self.abundance is not None:
-				self.abundance = self.abundance_enum[self.abundance]
+				self.abundance = self.abundance_enum[self.abundance - 1]
 
 			if self.occurrence is not None:
-				self.occurrence = self.occurrence_enum[self.occurrence]
+				self.occurrence = self.occurrence_enum[self.occurrence - 1]
 
 		except ValueError as e:
-			perror(e.args[0])
+			pass
+
+	def update(self, row):
+		try:
+			print_header('Update Species Data')
+			print("Press enter on empty string if you don't want to change the current value")
+			print("Current record status", f(row['record_status']), ":")
+			ask(self.get_record_status, self.record_status_options)()
+			print("Current abundance status", f(row['abundance']), ":")
+			ask(self.get_abundance, self.abundance_options)()
+			print("Current occurrence status", f(row['occurrence']), ":")
+			ask(self.get_occurrence, self.occurrence_options)()
+			self.current_population = row['current_population']
+			print("Current population:", f(row['current_population']), ":")
+			ask(self.get_population)()
+
+			if self.record_status is not None:
+				self.record_status = self.record_status_enum[self.record_status - 1]
+			else:
+				self.record_status = row['record_status']
+
+			if self.abundance is not None:
+				self.abundance = self.abundance_enum[self.abundance - 1]
+			else:
+				self.abundance = row['abundance']
+
+			if self.occurrence is not None:
+				self.occurrence = self.occurrence_enum[self.occurrence - 1]
+			else:
+				self.occurrence = row['occurrence']
+
+		except ValueError as e:
+			perror('Invalid Input was enterred')
+			a = input("Press enter to exit")

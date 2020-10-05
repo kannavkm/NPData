@@ -1,27 +1,24 @@
 import pymysql
 
 import src.admin_interface
+import src.scientific_interface
 import src.user_interface
 import src.utils.database as db
-import src.utils.syntax_check as syntax
 from src.utils.utils import *
 
 
 def dispatch(option):
     if option == 1:
         f = Figlet(font='slant')
-        print(f.renderText('Public Interface'))
-        SI = src.admin_interface.AdminInterface(np)
-        SI.loop()
+        AI = src.admin_interface.AdminInterface(np)
+        AI.loop()
     elif option == 2:
         f = Figlet(font='slant')
-        print(f.renderText('User Interface'))
         UI = src.user_interface.UserInterface(np)
         UI.loop()
     elif option == 3:
         f = Figlet(font='slant')
-        print(f.renderText('Scientific Interface'))
-        SI = src.user_interface.UserInterface(np)
+        SI = src.scientific_interface.ScientificInterface(np)
         SI.loop()
     else:
         perror("Error: Invalid Option")
@@ -52,7 +49,7 @@ while True:
             while True:
                 tmp = sp.call('clear', shell=True)
                 print("Select the interface  you want to access")
-                print("1. Public Interface")
+                print("1. Admin Interface")
                 print("2. User Interface")
                 print("3. Scientific Interface")
                 choice = int(input('>>> '))

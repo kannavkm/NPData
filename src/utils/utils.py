@@ -2,6 +2,8 @@ import subprocess as sp
 
 from pyfiglet import Figlet
 
+import src.utils.syntax_check as syntax
+
 
 class BgColor:
     HEADER = '\033[95m'
@@ -37,7 +39,14 @@ def ask(func, func2=None):
     return inner
 
 
-def _(x):
+def to_int(x):
+    if syntax.empty(x):
+        return None
+    else:
+        return int(x)
+
+
+def f(x):
     if x is None:
         return 'NULL'
     elif type(x) is str:

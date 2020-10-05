@@ -3,7 +3,7 @@ from tabulate import tabulate
 from src.classes.employee import *
 from src.classes.national_park import NationalPark
 from src.classes.species import Species, Presence
-from src.utils.utils import _
+from src.utils.utils import *
 
 
 class AdminInterface:
@@ -16,7 +16,6 @@ class AdminInterface:
             'Add Employee',
             'Add Species Data',
             'Service Information',
-            'Update Presence',
             'Exit'
         ]
         self.functions = [
@@ -25,7 +24,6 @@ class AdminInterface:
             self.add_employee,
             self.add_demography,
             self.service_info_report,
-            self.update_presence
         ]
         self.curr_opt = 0
 
@@ -42,7 +40,7 @@ class AdminInterface:
         print("Here is the current park report of {}".format(self.national_park.name))
 
         query = "SELECT DISTINCT S.genus, S.specific_name, S.name, S.average_lifespan, P.abundance, " \
-                "D.total_population FROM Demography D, Presence P, Species S WHERE D.presence_id = P.presence_id AND " \
+                "P.current_population FROM Presence P, Species S WHERE " \
                 "(S.genus, S.specific_name) = (P.genus, P.specific_name)" \
                 " AND P.national_park = '{}'".format(self.national_park.unitcode)
         rows = self.db.get_result(query)
@@ -80,22 +78,36 @@ class AdminInterface:
             ans = input("That species is already recorded in {} would you like to update the status(y/n)").format(
                 self.national_park.unitcode)
             if ans == "y":
-                pass  # // TODO
+                presence = Presence()
+                presence.update(rows[0])
+
+                qq = "UPDATE Presence SET record_status = {}, abundance = {}, occurrence = {}" \
+                     " , current_population = {} WHERE genus = {} and specific_name = {} and national_park = {}". \
+                    format(f(presence.record_status),
+                           f(presence.abundance),
+                           f(presence.occurrence),
+                           f(presence.current_population),
+                           f(genus),
+                           f(spec_name),
+                           f(self.national_park.unitcode))
+                self.db.execute_query([qq])
+                ans = input('Press ENTER to continue')
+                return
 
         presence = Presence()
         presence.add()
 
         qq = "INSERT INTO Presence(genus, specific_name, national_park, nativeness, is_attraction," \
-             " abundance, record_status, record_time, occurence) VALUES ({}, {}, {}, {}, {}, {}," \
-             " {}, {}, {})".format(_(genus),
-                                   _(spec_name),
-                                   _(self.national_park.unitcode),
-                                   _(presence.nativeness),
-                                   _(int(presence.is_attraction)),
-                                   _(presence.abundance_enum[presence.abundance - 1]),
-                                   _(presence.record_status_enum[presence.record_status - 1]),
-                                   _(presence.record_date),
-                                   _(presence.occurrence_enum[presence.occurrence - 1])
+             " abundance, record_status, record_time, occurrence) VALUES ({}, {}, {}, {}, {}, {}," \
+             " {}, {}, {})".format(f(genus),
+                                   f(spec_name),
+                                   f(self.national_park.unitcode),
+                                   f(presence.nativeness),
+                                   f(int(presence.is_attraction)),
+                                   f(presence.abundance_enum[presence.abundance - 1]),
+                                   f(presence.record_status_enum[presence.record_status - 1]),
+                                   f(presence.record_date),
+                                   f(presence.occurrence_enum[presence.occurrence - 1])
                                    )
         self.db.execute_query([qq])
         ans = input('Press ENTER to continue')
@@ -106,11 +118,12 @@ class AdminInterface:
         self.db.execute_query(emp())
         ans = input('Press ENTER to continue')
 
-    def update_presence(self):
+    def add_demography(self):
 
         print_header("Update Census")
         genus = None
         spec_name = None
+        newvalue = None
         try:
             genus, spec_name = input("Enter the scientific name of the Species (format: genus specific name): ").split()
             genus = genus.lower()

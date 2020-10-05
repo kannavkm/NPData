@@ -2,7 +2,6 @@ import time
 
 from tabulate import tabulate
 
-import src.utils.syntax_check as syntax
 from src.classes.user import User
 from src.utils.utils import *
 
@@ -40,9 +39,9 @@ class UserInterface:
         repeat_and_error(newUser.get_password)()
         repeat_and_error(newUser.get_contact)()
 
-        query = ["UPDATE User SET username = {} and password = {} and " \
+        query = ["UPDATE User SET username = {} , password = {} , " \
                  "contact_number = {} where user_id = {}".format(
-            newUser.username, newUser.password, newUser.contact_number, self.user_id)]
+            newUser.username, newUser.password, newUser.contact_number, self.current_user.user_id)]
 
         res = self.db.execute_query(query)
         self.username = newUser.username
@@ -139,8 +138,7 @@ class UserInterface:
                     break
 
         except Exception as q:
-            for part in q:
-                perror(str(part)),
+            print(q)
             time.sleep(5)
 
     def do_a_booking(self):
