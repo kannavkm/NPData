@@ -1,6 +1,11 @@
+import src.utils.syntax_check as syntax
+from src.utils.utils import perror
+
+
 class NationalPark:
 
-    def __init__(self):
+    def __init__(self, db):
+        self.db = db
         self.unitcode = None
         self.name = None
         self.region_code = None
@@ -8,21 +13,27 @@ class NationalPark:
         self.latitude = None
         self.longitude = None
 
-    def add(self):
-        print("Enter National Park's details: ")
+    def get_national_park(self):
 
-        def getunitcode():
-            self.unitcode = int(input("Enter unitcode: "))
+        while True:
+            rows = self.db.get_result("SELECT * from National_Park")
+            i = 0
+            for row in rows:
+                print('{}. {} ({})'.format(i + 1, row['name'], row['unit_code']))
+                i += 1
 
-        self.name = input("Enter Name: ").lower()
-        self.region_code = input("Enter Region code: ").lower()
-        self.boundary = input("Enter Boundary: ")
-        self.latitude = float(input("Enter latitude: "))
-        self.longitude = float(input("Enter longitude: "))
+            row = int(input("Please enter the corresponding number to access National Park: "))
+            if not syntax.validate_range(row, 0, len(rows) - 1):
+                perror('Invalid Input. Please choose again!')
+                continue
 
-        query = """INSERT INTO National_Park(unit_code, name, region_code, boundary, latitude, longitude) 
-        VALUES(%s, %s, %s, st_polyfromtext('polygon(%s)') , %s, %s)"""
-
-        values = (self.unitcode, self.name, self.region_code, self.boundary, self.latitude, self.longitude)
-
-        return query.format(values)
+            ch = input("Are you sure to choose {} (y/n)".format(rows[row - 1]["name"])).lower()
+            if ch == "y":
+                self.unitcode = rows[row - 1]["unit_code"]
+                self.name = rows[row - 1]["name"]
+                self.region_code = rows[row - 1]["region_code"]
+                self.boundary = rows[row - 1]["boundary"]
+                self.latitude = rows[row - 1]["latitude"]
+                self.longitude = rows[row - 1]["longitude"]
+                return
+            print("")

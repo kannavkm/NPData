@@ -16,13 +16,15 @@ class UserInterface:
             'Book a Service',
             'Cancel a Booking',
             'Provide Feedback',
+            'Update your Profile',
             'Exit'
         ]
         self.functions = [
             self.discover,
             self.do_a_booking,
             self.cancel_booking,
-            self.give_feedback
+            self.give_feedback,
+            self.update_user,
         ]
         self.curr_opt = 0
 
@@ -30,6 +32,22 @@ class UserInterface:
         self.current_user = User()
         query = self.current_user.create()
         res = self.db.execute_query([query])
+        return res
+
+    def update_user(self):
+        newUser = User()
+        repeat_and_error(newUser.get_name)()
+        repeat_and_error(newUser.get_password)()
+        repeat_and_error(newUser.get_contact)()
+
+        query = ["UPDATE User SET username = {} and password = {} and " \
+                 "contact_number = {} where user_id = {}".format(
+            newUser.username, newUser.password, newUser.contact_number, self.user_id)]
+
+        res = self.db.execute_query(query)
+        self.username = newUser.username
+        self.password = newUser.password
+        self.contact_number = newUser.contact_number
         return res
 
     def login_user(self):
@@ -280,9 +298,7 @@ class UserInterface:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
 
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Cancellation'))
+                print_header('Cancellation')
 
                 print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
                 booking_code = int(input('Enter the corresponding number of the booking you want to book for:'))
@@ -383,9 +399,7 @@ class UserInterface:
         print("Are you an existing user(y/n):")
         ans = input()
         if ans.lower() != 'y':
-            tmp = sp.call('clear', shell=True)
-            f = Figlet(font='slant')
-            print(f.renderText('Registration'))
+            print_header('Registration')
             while not self.create_user():
                 pass
             psuccess('User successfully created')
@@ -402,9 +416,7 @@ class UserInterface:
 
         try:
             while True:
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('User Dashboard'))
+                print_header('User Interface')
                 for i in range(len(self.options)):
                     print('{}. {}'.format(i + 1, self.options[i]))
                 repeat_and_error(self.choose_options)()

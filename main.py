@@ -1,8 +1,6 @@
-import subprocess as sp
-
 import pymysql
-from pyfiglet import Figlet
 
+import src.admin_interface
 import src.user_interface
 import src.utils.database as db
 import src.utils.syntax_check as syntax
@@ -13,7 +11,7 @@ def dispatch(option):
     if option == 1:
         f = Figlet(font='slant')
         print(f.renderText('Public Interface'))
-        SI = src.admin_interface.AdminInterface()
+        SI = src.admin_interface.AdminInterface(np)
         SI.loop()
     elif option == 2:
         f = Figlet(font='slant')
@@ -30,9 +28,7 @@ def dispatch(option):
         return
 
 
-tmp = sp.call('clear', shell=True)
-f = Figlet(font='slant')
-print(f.renderText('National Park'))
+print_header('National Park')
 
 global np
 

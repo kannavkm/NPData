@@ -1,6 +1,6 @@
 import src.utils.syntax_check as syntax
-from src.utils.utils import repeat_and_error, perror
 
+from ..utils.utils import *
 
 class Employee:
     gender_enum = [
@@ -9,7 +9,9 @@ class Employee:
         'Others'
     ]
 
-    def __init__(self):
+    def __init__(self, db, np):
+        self.np = np
+        self.db = db
         self.emp_Name = None
         self.gender = None
         self.emp_email = None
@@ -55,10 +57,12 @@ class Employee:
         return perror("Role cannot be empty") if syntax.empty(self.role) else True
 
     def get_dno(self):
-        self.works_for_dno = int(input("Enter Department Number for above employee: "))
+
         return True
 
     def hire(self):
+
+        print_header("Hire")
         print("Enter new Employee's details: ")
 
         try:
@@ -69,16 +73,29 @@ class Employee:
             repeat_and_error(self.get_dob)()
             repeat_and_error(self.get_doj)()
             repeat_and_error(self.get_role)()
-            repeat_and_error(self.get_dno)()
+
+            rows = self.db.get_result(
+                "SELECT DISTINCT * from `Department` where contained_in = '{}'".format(
+                    self.np.unitcode))
+
+            print("Here is the list of Departments in ", self.np.name)
+            i = 0
+            for row in rows:
+                print('{}. {}'.format(i + 1, row['dep_name']))
+                i += 1
+
+            self.works_for_dno = int(input("Enter Department Number: "))
+            if not syntax.validate_range(self.works_for_dno, 0, len(rows) - 1):
+                perror('Invalid Input')
+                return
 
             query = ["INSERT INTO Employee( emp_Name, gender, emp_email, contact_number,  " \
-                     "date_of_birth, date_of_joining, role, works_for_dno, national_park)" \
-                     "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+                     "date_of_birth, date_of_joining, `role`, works_for_dno, national_park) " \
+                     "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
                 self.emp_Name, self.gender, self.emp_email,
                 self.contact_number, self.date_of_birth, self.date_of_joining,
-                self.role, self.works_for_dno)]
+                self.role, rows[self.works_for_dno - 1]["dep_number"], self.np.unitcode)]
 
-            print(query)
             return query
 
         except ValueError as e:

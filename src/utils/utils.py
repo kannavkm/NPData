@@ -28,6 +28,24 @@ def print_header(x):
     print(f.renderText(x))
 
 
+def ask(func, func2=None):
+    def inner():
+        if func2 is not None:
+            func2()
+        func()
+
+    return inner
+
+
+def _(x):
+    if x is None:
+        return 'NULL'
+    elif type(x) is str:
+        return "'{}'".format(x)
+    else:
+        return x
+
+
 def repeat_and_error(func, func2=None):
     def inner():
         if func2 is not None:
