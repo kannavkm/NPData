@@ -1,7 +1,5 @@
-import subprocess as sp
 import time
 
-from pyfiglet import Figlet
 from tabulate import tabulate
 
 import src.utils.syntax_check as syntax
@@ -61,14 +59,9 @@ class UserInterface:
             return True
 
     def discover(self):
-        tmp = sp.call('clear', shell=True)
-        f = Figlet(font='slant')
-        print(f.renderText('Discover'))
         try:
             while True:
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Discover'))
+                print_header('Discover')
                 national_list = "SELECT unit_code, name from National_Park"
                 rows = self.db.get_result(national_list)
                 print('Here are the National Parks')
@@ -82,14 +75,13 @@ class UserInterface:
                     return
                 target_np = rows[unit_code - 1]
 
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Discover'))
+                print_header('Discover')
                 service_list = "SELECT service_id, name, description from Services where provided_by ='{}' ".format(
                     target_np['unit_code'])
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
-                    print("Sorry No services are available")
+                    print("Sorry No services are available in that National,",
+                          "Kindly wait while we send you back to main screen")
                     time.sleep(5)
                     continue
                 print("Here's a list of services in", target_np['name'])
@@ -103,9 +95,7 @@ class UserInterface:
                     return
                 target_service = rows[service_code - 1]
 
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Discover'))
+                print_header('Discover')
                 print("Name: " + target_service['name'] + " at " + target_np['name'] + "\nAbout: " + target_service[
                     'description'])
 
@@ -133,14 +123,12 @@ class UserInterface:
         except Exception as q:
             for part in q:
                 perror(str(part)),
-            time.sleep(10)
+            time.sleep(5)
 
     def do_a_booking(self):
         global booking_id
         try:
-            tmp = sp.call('clear', shell=True)
-            f = Figlet(font='slant')
-            print(f.renderText('Booking'))
+            print_header('Booking')
             adult = int(input("Enter number of adults in the party:"))
             children = int(input("Enter the number of Children in the party:"))
             qq = "INSERT INTO Booking(user_id, number_of_adults, number_of_children) VALUES({}, {}, {})".format(
@@ -158,9 +146,8 @@ class UserInterface:
 
             q = []
             while True:
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Booking'))
+                # Get target National Park
+                print_header('Booking')
                 national_list = "SELECT unit_code, name from National_Park"
                 rows = self.db.get_result(national_list)
                 print('Here are the National Parks')
@@ -174,14 +161,13 @@ class UserInterface:
                     return
                 target_np = rows[unit_code - 1]
 
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Booking'))
+                # Get target Service
+                print_header('Booking')
                 service_list = "SELECT service_id, name, description from Services where provided_by ='{}' ".format(
                     target_np['unit_code'])
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
-                    print("Sorry No services are available")
+                    print("Sorry No services are available in that National Park")
                     time.sleep(5)
                     continue
                 print("Here's a list of services in", target_np['name'])
@@ -195,15 +181,14 @@ class UserInterface:
                     return
                 target_service = rows[service_code - 1]
 
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Booking'))
+                # Get target Sub_service
+                print_header('Booking')
                 timings_list = "SELECT sub_service_id, timings from Sub_service where service_id ='{}' ".format(
                     target_service['service_id'])
                 rows = self.db.get_result(timings_list)
                 if len(rows) == 0:
                     print("Sorry we couldn't find services that are available")
-                    time.sleep(5)
+                    time.sleep(2.5)
                     continue
                 print("Here's a list of timings of", target_service['name'])
                 i = 0
@@ -217,9 +202,8 @@ class UserInterface:
                     return
                 target_sub_service = rows[sub_service_code - 1]
 
-                tmp = sp.call('clear', shell=True)
-                f = Figlet(font='slant')
-                print(f.renderText('Booking'))
+                # Get target Date
+                print_header('Booking')
                 dates_list = "SELECT date, price from Sub_service_timings where availability > 0" \
                              " AND sub_service_id = {}".format(sub_service_code)
                 rows = self.db.get_result(dates_list)
@@ -275,7 +259,7 @@ class UserInterface:
             qq = "DELETE FROM Booking where booking_id = {}".format(booking_id)
             self.db.execute_query([qq])
             print(type(q))
-            time.sleep(10)
+            time.sleep(5)
 
     def cancel_booking(self):
         try:
@@ -284,6 +268,17 @@ class UserInterface:
                     self.current_user.user_id)
 
                 rows = self.db.get_result(qq)
+
+                if len(rows) == 0:
+                    print("Sorry we couldn't find any bookings by you,",
+                          "You will now be transferred back to the main screen")
+                    time.sleep(2.5)
+                    continue
+
+                i = 0
+                for row in rows:
+                    print('{}. {}'.format(i + 1, row['name']))
+                    i += 1
 
                 tmp = sp.call('clear', shell=True)
                 f = Figlet(font='slant')
@@ -301,14 +296,14 @@ class UserInterface:
 
                 self.db.execute_query([qq])
 
-                print('Do you want to continue to cancel your bookings(y/n)')
+                print('Do you want to return back to the bookings page(y/n)')
                 ans = input()
                 if ans.lower() != 'y':
                     break
 
         except Exception as q:
             print(type(q))
-            time.sleep(10)
+            time.sleep(5)
 
     def give_feedback(self):
         try:
@@ -338,8 +333,9 @@ class UserInterface:
                     target_np['unit_code'])
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
-                    print("Sorry we couldn't find services that are available")
-                    time.sleep(5)
+                    print("Sorry we couldn't find services that are available,",
+                          "You will now be transferred back to the main screen")
+                    time.sleep(2.5)
                     continue
 
                 print("Here's a list of services offered by", target_np['name'])
@@ -377,11 +373,11 @@ class UserInterface:
 
             self.db.execute_query(q)
             psuccess("Congratulations your feedback was recorded")
-            time.sleep(5)
+            time.sleep(2.5)
 
         except Exception as q:
             print(type(q))
-            time.sleep(10)
+            time.sleep(5)
 
     def loop(self):
         print("Are you an existing user(y/n):")

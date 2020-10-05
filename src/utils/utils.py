@@ -1,3 +1,8 @@
+import subprocess as sp
+
+from pyfiglet import Figlet
+
+
 class BgColor:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -15,6 +20,12 @@ def psuccess(x):
 
 def perror(x):
     print(BgColor.WARNING + x + BgColor.ENDCLR)
+
+
+def print_header(x):
+    mp = sp.call('clear', shell=True)
+    f = Figlet(font='slant')
+    print(f.renderText(x))
 
 
 def repeat_and_error(func, func2=None):

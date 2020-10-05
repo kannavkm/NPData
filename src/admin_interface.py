@@ -11,8 +11,7 @@ class AdminInterface:
             'Add Employee',
             'Update Species Data',
             'Get Species Data',
-            'Add new Service'
-            'Service Info',
+            'Service Information',
             'Exit'
         ]
         self.functions = [
@@ -20,9 +19,7 @@ class AdminInterface:
             self.add_species,
             self.add_employee,
             self.update_species,
-            self.add_researcher,
             self.get_demography,
-            self.add_new_service,
             self.service_report,
         ]
         self.curr_opt = 0
