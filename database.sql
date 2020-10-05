@@ -114,7 +114,8 @@ LOCK TABLES `Class_classification` WRITE;
 /*!40000 ALTER TABLE `Class_classification`
     DISABLE KEYS */;
 INSERT INTO `Class_classification`
-VALUES ('Aves', 'Ciconiiformes'),
+VALUES ('a', 'a'),
+       ('Aves', 'Ciconiiformes'),
        ('Aves', 'Otidiformes'),
        ('Mammalia', 'Carnivora'),
        ('Mammalia', 'Proboscidea'),
@@ -220,9 +221,7 @@ LOCK TABLES `Demography` WRITE;
 /*!40000 ALTER TABLE `Demography`
     DISABLE KEYS */;
 INSERT INTO `Demography`
-VALUES (1, '2018-01-01 16:30:00', 215, 12),
-       (1, '2020-10-04 06:00:19', 123, 12),
-       (1, '2020-10-04 06:01:57', 1212, 12),
+VALUES (1, '2020-10-04 06:01:57', 1212, 12),
        (2, '2020-06-30 12:00:00', 28, 14),
        (3, '2018-07-01 12:00:00', 30, 15),
        (5, '2015-10-10 14:30:00', 44, 38),
@@ -302,7 +301,7 @@ CREATE TABLE `Employee`
     KEY `national_park` (`national_park`, `works_for_dno`),
     CONSTRAINT `Employee_ibfk_1` FOREIGN KEY (`national_park`, `works_for_dno`) REFERENCES `Department` (`contained_in`, `dep_number`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 9
+  AUTO_INCREMENT = 10
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -327,7 +326,8 @@ VALUES (1, 'Michael Scott', '1977-01-01', '9321929192', 'Mike@email.com', 'Male'
        (7, 'Leslie Knope', '1999-01-01', '9399919212', 'lesterknopf@email.com', 'Female', '2000-01-01', 'Parks Person',
         1, 'CRBT'),
        (8, 'April Ludgate', '1992-01-01', '9399991921', 'jackolantern@email.com', 'Female', '2017-01-01', 'Evil Hag', 4,
-        'KZRG');
+        'KZRG'),
+       (9, 'kk', '2000-02-02', '1234567890', 'kk@k.com', 'Male', '2000-02-02', 'kk', 1, 'CRBT');
 /*!40000 ALTER TABLE `Employee`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -359,7 +359,8 @@ LOCK TABLES `Family_classification` WRITE;
 /*!40000 ALTER TABLE `Family_classification`
     DISABLE KEYS */;
 INSERT INTO `Family_classification`
-VALUES ('Ciconiidae', 'Leptoptilos'),
+VALUES ('a', 'a'),
+       ('Ciconiidae', 'Leptoptilos'),
        ('Elephantidae', 'Elephas'),
        ('Fabaceae', 'Saraca'),
        ('felidae', 'Neofelis'),
@@ -527,7 +528,8 @@ LOCK TABLES `Kingdom_classification` WRITE;
 /*!40000 ALTER TABLE `Kingdom_classification`
     DISABLE KEYS */;
 INSERT INTO `Kingdom_classification`
-VALUES ('Plantae', 'Angiosperms'),
+VALUES ('a', 'a'),
+       ('Plantae', 'Angiosperms'),
        ('Animalia', 'Aves'),
        ('Animalia', 'Mammalia'),
        ('Animalia', 'Reptilia'),
@@ -635,7 +637,8 @@ LOCK TABLES `Order_classification` WRITE;
 /*!40000 ALTER TABLE `Order_classification`
     DISABLE KEYS */;
 INSERT INTO `Order_classification`
-VALUES ('carnivora', 'felidae'),
+VALUES ('a', 'a'),
+       ('carnivora', 'felidae'),
        ('ciconiiformes', 'Ciconiidae'),
        ('Fabales', 'Fabaceae'),
        ('Otidiformes', 'Otididae'),
@@ -695,23 +698,24 @@ DROP TABLE IF EXISTS `Presence`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Presence`
 (
-    `presence_id`   int NOT NULL AUTO_INCREMENT,
-    `genus`         varchar(255)                      DEFAULT NULL,
-    `specific_name` varchar(255)                      DEFAULT NULL,
-    `national_park` varchar(4)                        DEFAULT NULL,
-    `nativeness`    tinyint(1)                        DEFAULT NULL,
-    `is_attraction` tinyint(1)                        DEFAULT NULL,
-    `abundance`     enum ('rare','common','uncommon') DEFAULT NULL,
-    `record_status` enum ('Verified','Non Verified')  DEFAULT NULL,
-    `record_time`   datetime                          DEFAULT NULL,
-    `occurence`     enum ('Full Year','Seasonal')     DEFAULT NULL,
+    `presence_id`        int NOT NULL AUTO_INCREMENT,
+    `genus`              varchar(255)                      DEFAULT NULL,
+    `specific_name`      varchar(255)                      DEFAULT NULL,
+    `national_park`      varchar(4)                        DEFAULT NULL,
+    `nativeness`         tinyint(1)                        DEFAULT NULL,
+    `is_attraction`      tinyint(1)                        DEFAULT NULL,
+    `abundance`          enum ('rare','common','uncommon') DEFAULT NULL,
+    `record_status`      enum ('Verified','Non Verified')  DEFAULT NULL,
+    `record_time`        date                              DEFAULT NULL,
+    `occurrence`         enum ('Full Year','Seasonal')     DEFAULT NULL,
+    `current_population` int                               DEFAULT NULL,
     PRIMARY KEY (`presence_id`),
     KEY `genus` (`genus`, `specific_name`),
     KEY `national_park` (`national_park`),
     CONSTRAINT `Presence_ibfk_1` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`),
     CONSTRAINT `Presence_ibfk_2` FOREIGN KEY (`genus`, `specific_name`) REFERENCES `Species` (`genus`, `specific_name`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 8
+  AUTO_INCREMENT = 9
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -724,13 +728,13 @@ LOCK TABLES `Presence` WRITE;
 /*!40000 ALTER TABLE `Presence`
     DISABLE KEYS */;
 INSERT INTO `Presence`
-VALUES (1, 'Panthera', 'tigris', 'CRBT', 1, 1, 'uncommon', 'Verified', '2010-06-30 12:00:00', 'Full Year'),
-       (2, 'Panthera', 'tigris', 'KLDO', 1, 1, 'rare', 'Verified', '2015-01-31 15:00:00', 'Full Year'),
-       (3, 'Panthera', 'tigris', 'MNAS', 1, 1, 'rare', 'Non Verified', '2020-09-30 18:00:00', 'Seasonal'),
-       (4, 'Ficus', 'religiosa', 'KNHA', 1, 0, 'common', 'Verified', '2016-12-31 08:00:00', 'Full Year'),
-       (5, 'Python', 'molurus', 'KLDO', 1, 0, 'uncommon', 'Non Verified', '2015-08-20 09:45:00', 'Seasonal'),
-       (6, 'Ardeotis', 'nigriceps', 'KLDO', 1, 1, 'rare', 'Non Verified', '2010-10-10 13:00:00', 'Seasonal'),
-       (7, 'Python', 'molurus', 'KNHA', 1, 0, 'uncommon', 'Verified', '2018-11-15 12:45:00', 'Full Year');
+VALUES (1, 'Panthera', 'tigris', 'CRBT', 1, 1, 'uncommon', 'Verified', '2010-06-30', 'Full Year', 124),
+       (2, 'Panthera', 'tigris', 'KLDO', 1, 1, 'uncommon', 'Verified', '2015-01-31', 'Full Year', 124),
+       (3, 'Panthera', 'tigris', 'MNAS', 1, 1, 'uncommon', 'Verified', '2020-09-30', 'Full Year', 124),
+       (4, 'Ficus', 'religiosa', 'KNHA', 1, 0, 'common', 'Verified', '2016-12-31', 'Full Year', 22),
+       (5, 'Python', 'molurus', 'KLDO', 1, 0, 'uncommon', 'Non Verified', '2015-08-20', 'Seasonal', 44),
+       (6, 'Ardeotis', 'nigriceps', 'KLDO', 1, 1, 'rare', 'Non Verified', '2010-10-10', 'Seasonal', 56),
+       (7, 'Python', 'molurus', 'KNHA', 1, 0, 'uncommon', 'Verified', '2018-11-15', 'Full Year', 232);
 /*!40000 ALTER TABLE `Presence`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1036,7 +1040,8 @@ LOCK TABLES `Species` WRITE;
 /*!40000 ALTER TABLE `Species`
     DISABLE KEYS */;
 INSERT INTO `Species`
-VALUES ('Ardeotis', 'nigriceps', '172692', 'Great Indian Bustard', 'Critically Endangered', 12),
+VALUES ('a', 'a', '1234567890', 'aa', 'Extinct', 1),
+       ('Ardeotis', 'nigriceps', '172692', 'Great Indian Bustard', 'Critically Endangered', 12),
        ('Ficus', 'religiosa', '66387', 'Peepal Tree', 'Least Concern', 1000),
        ('Leptoptilos', 'dubius', '1940340', 'Greater adjutant', 'Endangered', 35),
        ('Panthera', 'leo', '83386', 'Asiatic lion', 'Endangered', 18),
@@ -1398,7 +1403,7 @@ CREATE TABLE `User`
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 7
+  AUTO_INCREMENT = 8
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1416,7 +1421,8 @@ VALUES (1, 'Mekhi Schmeler', 'lindgren.ezra@morrlibsu.ga', 'abcd', '4358822482',
        (3, 'Favian Nolan', 'aliya45@meliece.com', 'abcd', '8242065279', '2020-10-14'),
        (4, 'Fritz Lockman', 'eyon.wehner@malomies.com', 'abcd', '2751300966', '2020-10-23'),
        (5, 'Lane Von', 'kjast@kingleo.us', 'abcd', '3847866482', '2020-10-30'),
-       (6, 'kannav mehta', 'kannav@email.com', 'abcd', '1234567890', '2000-01-01');
+       (6, 'kannav mehta', 'kannav@email.com', 'abcd', '1234567890', '2000-01-01'),
+       (7, 'triansh', 'triansh@email.com', 'abcd', '9982443531', '2000-10-10');
 /*!40000 ALTER TABLE `User`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1605,4 +1611,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-04 19:01:58
+-- Dump completed on 2020-10-06  0:12:19
