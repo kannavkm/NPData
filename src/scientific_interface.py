@@ -168,9 +168,12 @@ class ScientificInterface:
         spec_name = None
 
         while True:
+
+            print(
+                "** This query is a partial text search.\n The space between genus and specific name is necessary.\n\n")
             try:
                 genus, spec_name = input(
-                    "Enter the scientific name of the Species (format: genus specific name): ").split()
+                    "Enter the scientific name of the Species (format: genus specific_name): ").split()
                 genus = genus.lower()
                 spec_name = spec_name.lower()
             except ValueError as e:

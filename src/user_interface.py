@@ -37,7 +37,7 @@ class UserInterface:
 
         except Exception as e:
             perror('An error occurred')
-            inp = input('Press Enter to continue')
+            inp = input('Press Enter to continue >> ')
 
     def update_user(self):
         newUser = User()
@@ -51,7 +51,7 @@ class UserInterface:
 
         res = self.db.execute_query(query)
         self.current_user = newUser
-        inp = input('Press ENTER to continue>> ')
+        inp = input('\nPress ENTER to continue >> ')
 
     def login_user(self):
         query = self.current_user.login()
@@ -72,7 +72,7 @@ class UserInterface:
             return False
 
     def choose_options(self):
-        self.curr_opt = int(input('Enter the corresponding option for which activity you want to perform:'))
+        self.curr_opt = int(input('Enter the corresponding option for which activity you want to perform: '))
         if not syntax.validate_range(self.curr_opt, 1, len(self.options)):
             perror("must be from one of the options")
             return False
@@ -90,7 +90,7 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
-                unit_code = int(input('Enter the corresponding number of the National Park you want to Discover:'))
+                unit_code = int(input('Enter the corresponding number of the National Park you want to Discover: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -102,7 +102,7 @@ class UserInterface:
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
                     print("Sorry No services are available in that National,",
-                          "Kindly wait while we send you back to main screen")
+                          " Kindly wait while we send you back to main screen")
                     time.sleep(5)
                     continue
                 print("Here's a list of services in", target_np['name'])
@@ -110,7 +110,7 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}: \nAbout : {}'.format(i + 1, row['name'], row['description']))
                     i += 1
-                service_code = int(input('Enter the corresponding number of the service you want to read about:'))
+                service_code = int(input('Enter the corresponding number of the service you want to read about: '))
                 if not syntax.validate_range(service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -136,7 +136,7 @@ class UserInterface:
 
                 print(tabulate(rows, headers="keys"))
 
-                print('Do you want to continue to Discover(y/n)')
+                print('Do you want to continue to Discover? (y/n): ')
                 ans = input()
                 if ans.lower() != 'y':
                     break
@@ -175,7 +175,7 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
-                unit_code = int(input('Enter the corresponding number of the National Park you want to book:'))
+                unit_code = int(input('Enter the corresponding number of the National Park you want to book: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -195,7 +195,7 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}: \n {}'.format(i + 1, row['name'], row['description']))
                     i += 1
-                service_code = int(input('Enter the corresponding number of the service you want to book:'))
+                service_code = int(input('Enter the corresponding number of the service you want to book: '))
                 if not syntax.validate_range(service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -216,7 +216,7 @@ class UserInterface:
                     print('{}. {}'.format(row['sub_service_id'], row['timings']))
                     i += 1
                 sub_service_code = int(input('Enter the corresponding number of the timings of the service you want to '
-                                             'book:'))
+                                             'book: '))
                 if not syntax.validate_range(sub_service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -231,12 +231,12 @@ class UserInterface:
                     print("Sorry No services are avaliable")
                     time.sleep(5)
                     continue
-                print("Here's a list of dates which are available")
+                print("Here's a list of dates which are available: ")
                 i = 0
                 for row in rows:
                     print('{}. {}'.format(i + 1, row['date']))
                     i += 1
-                date_code = int(input('Enter the corresponding number of the date you want to book for:'))
+                date_code = int(input('Enter the corresponding number of the date you want to book for: '))
                 if not syntax.validate_range(sub_service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -257,7 +257,7 @@ class UserInterface:
 
                 q.append(qq)
 
-                print('Do you want to continue to book services(y/n)')
+                print('Do you want to continue to book services? (y/n): ')
                 ans = input()
                 if ans.lower() != 'y':
                     break
@@ -265,21 +265,21 @@ class UserInterface:
             for i in chosen:
                 print(i)
             print("Total Expenses:", total_price)
-            print('Do you want to book the above services(y/n)')
+            print('Do you want to book the above services? (y/n): ')
             ans = input()
             if ans.lower() != 'y':
                 qq = "DELETE FROM Booking where booking_id = {}".format(booking_id)
                 self.db.execute_query([qq])
                 return
             self.db.execute_query(q)
-            psuccess("Congratulations your booking was a success")
+            psuccess("Congratulations,  your Booking was a success")
             time.sleep(5)
 
         except (ValueError, Exception) as q:
             qq = "DELETE FROM Booking where booking_id = {}".format(booking_id)
             self.db.execute_query([qq])
             print(type(q))
-            inp = input('Press ENTER to continue>> ')
+            inp = input('Press ENTER to continue >> ')
 
     def cancel_booking(self):
         try:
@@ -318,15 +318,15 @@ class UserInterface:
                     del_time)
 
                 self.db.execute_query([qq])
-                psuccess('The cancellation was a success, The amount will be returned in a few days')
-                print('Do you want to continue to cancel your prior bookings(y/n)')
+                psuccess('The Cancellation was a success. The amount will be returned in a few days')
+                print('Do you want to continue to cancel your prior bookings? (y/n): ')
                 ans = input()
                 if ans.lower() != 'y':
                     break
 
         except Exception as q:
             print(type(q))
-            inp = input('Press ENTER to continue>> ')
+            inp = input('Press ENTER to continue >> ')
 
     def give_service_feedback(self):
         try:
@@ -341,7 +341,7 @@ class UserInterface:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
                 unit_code = int(
-                    input('Enter the corresponding number of the National Park you want to provide feedback for:'))
+                    input('Enter the corresponding number of the National Park you want to provide feedback for: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -364,19 +364,19 @@ class UserInterface:
                     i += 1
 
                 service_code = int(
-                    input('Enter the corresponding number of the service you want to provide feedback for:'))
+                    input('Enter the corresponding number of the service you want to provide feedback for: '))
                 if not syntax.validate_range(service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
                 target_service = rows[service_code - 1]
 
-                rating = int(input('Enter the rating you would like to give to {}'.format(target_service['name'])))
+                rating = int(input('Enter the rating you would like to give to {}: '.format(target_service['name'])))
 
                 if not syntax.validate_range(rating, 1, 5):
                     perror('invalid Input')
                     return
 
-                print("Enter your remarks if any")
+                print("Enter your remarks if any: ")
                 remarks = input()
 
                 qq = "INSERT INTO Service_Feedback(user_id, service_id, rating, remarks, date)" \
@@ -385,13 +385,13 @@ class UserInterface:
 
                 q.append(qq)
 
-                print('Do you want to continue give feedback(y/n)')
+                print('Do you want to continue give feedback? (y/n): ')
                 ans = input()
                 if ans.lower() != 'y':
                     break
 
             self.db.execute_query(q)
-            psuccess("Congratulations your feedback was recorded")
+            psuccess("Congratulations, your feedback was recorded")
             time.sleep(2.5)
 
         except Exception as q:
@@ -464,13 +464,13 @@ class UserInterface:
         #     self.db.execute_query(q)
         #     psuccess("Congratulations your feedback was recorded")
         #     time.sleep(2.5)
-        #
+
         # except Exception as q:
         #     print(type(q))
         #     time.sleep(5)
 
     def loop(self):
-        print("Are you an existing user(y/n):")
+        print("Are you an existing user? (y/n): ")
         ans = input()
         if ans.lower() != 'y':
             print_header('Registration')

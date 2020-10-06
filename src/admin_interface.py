@@ -14,7 +14,7 @@ class AdminInterface:
             'Get National Park Report',
             'Modify/Add Species Data',
             'Add Employee',
-            'Add Species Data',
+            'Add Demography',
             'Service Information',
             'Features Information',
             'Exit'
@@ -47,7 +47,7 @@ class AdminInterface:
                 " AND P.national_park = '{}'".format(self.national_park.unitcode)
         rows = self.db.get_result(query)
         print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue >>')
 
     def add_species(self):
         print_header('Species')
@@ -67,7 +67,7 @@ class AdminInterface:
 
         if syntax.empty(rows):
             print_header('New Species')
-            print("This is a new species, Kindly enter the complete details of the species")
+            print("This is a new species, Kindly enter the complete details of the species: ")
             temp = Species(self.db)
             q = temp.add()
             self.db.execute_query(q)
@@ -77,7 +77,7 @@ class AdminInterface:
         rows = self.db.get_result(qq)
 
         if len(rows) > 0:
-            ans = input("That species is already recorded in {} would you like to update the status(y/n)".format(
+            ans = input("\nThat species is already recorded in {} would you like to update the status? (y/n): ".format(
                 self.national_park.unitcode))
             if ans == "y":
                 presence = Presence()
@@ -93,12 +93,12 @@ class AdminInterface:
                            f(spec_name),
                            f(self.national_park.unitcode))
                 self.db.execute_query([qq])
-                ans = input('Press ENTER to continue')
+                ans = input('\nPress ENTER to continue >> ')
             return
 
         print_header('Report Species')
         print(
-            'Kindly enter the details of the species {} {} in the {} \n, press enter on empty string to put NULL'.format(
+            'Kindly enter the details of the species {} {} in the {} \n, Press ENTER on empty string to put NULL'.format(
                 genus, spec_name, self.national_park.name))
 
         presence = Presence()
@@ -114,16 +114,15 @@ class AdminInterface:
                                    f(presence.abundance),
                                    f(presence.record_status),
                                    f(presence.record_date),
-                                   f(presence.occurrence)
-                                   )
+                                   f(presence.occurrence))
         self.db.execute_query([qq])
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue >> ')
 
     def add_employee(self):
         print_header("Add Employee")
         emp = Employee(self.db, self.national_park).hire
         self.db.execute_query(emp())
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue >> ')
 
     def add_demography(self):
 
@@ -150,7 +149,7 @@ class AdminInterface:
         except ValueError as e:
             print(e)
 
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue')
 
     def service_info_report(self):
         print_header("Service Report")
@@ -162,7 +161,7 @@ class AdminInterface:
             self.national_park.unitcode)
         rows = self.db.get_result(query)
         print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue')
 
     def get_features(self):
 
