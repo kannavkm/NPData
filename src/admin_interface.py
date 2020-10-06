@@ -2,7 +2,7 @@ from tabulate import tabulate
 
 from src.classes.employee import *
 from src.classes.national_park import NationalPark
-from src.classes.species import Species, Presence
+from src.classes.species import Species, Presence, Demography
 from src.utils.utils import *
 
 
@@ -16,6 +16,7 @@ class AdminInterface:
             'Add Employee',
             'Add Species Data',
             'Service Information',
+            'Features Information',
             'Exit'
         ]
         self.functions = [
@@ -24,6 +25,7 @@ class AdminInterface:
             self.add_employee,
             self.add_demography,
             self.service_info_report,
+            self.get_features
         ]
         self.curr_opt = 0
 
@@ -137,9 +139,13 @@ class AdminInterface:
 
             if len(rows) > 0:
                 target_presence = rows['presence_id']
-                qq = "UPDATE Presence SET current_population = {} " \
-                     "WHERE national_park = '{}' AND genus = '{}' AND specific_name = '{}') " \
-                    .format(newvalue, self.national_park, genus, spec_name)
+                demo = Demography()
+                demo.add()
+                qq = "INSERT INTO Demography(presence_id, time_stamp, total_population, average_lifespan)" \
+                     " VALUES({}, NOW(), {}, {})".format(target_presence,
+                                                         demo.total_population,
+                                                         demo.average_lifespan)
+                self.db.execute_query([qq])
 
         except ValueError as e:
             print(e)
@@ -157,6 +163,23 @@ class AdminInterface:
         rows = self.db.get_result(query)
         print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
         ans = input('Press ENTER to continue')
+
+    def get_features(self):
+
+        print_header("Features")
+        des_rating = float(input("Enter the desired rating value: "))
+
+        print("Here is the list of all features that are rated more than {}\n".format(des_rating))
+
+        query = "SELECT A.feature_name, A.availability, avg(rating) from Features A," \
+                " Feature_Feedback B where A.feature_id = B.feature_id and A.feature_id" \
+                " in ( SELECT feature_id from Zone C , Zone_contains D where" \
+                " C.zone_number = D.zone_number and C.belongs_to = '{}' ) " \
+                "GROUP BY B.feature_id having avg(rating) >= {}".format(self.national_park.unitcode, des_rating)
+
+        rows = self.db.get_result(query)
+        print(tabulate(rows, headers="keys", tablefmt="fancy_grid"))
+        ans = input('\nPress ENTER to continue >> ')
 
     def loop(self):
         print_header('Admin Interface')
