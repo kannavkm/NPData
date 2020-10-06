@@ -75,8 +75,8 @@ class AdminInterface:
         rows = self.db.get_result(qq)
 
         if len(rows) > 0:
-            ans = input("That species is already recorded in {} would you like to update the status(y/n)").format(
-                self.national_park.unitcode)
+            ans = input("That species is already recorded in {} would you like to update the status(y/n)".format(
+                self.national_park.unitcode))
             if ans == "y":
                 presence = Presence()
                 presence.update(rows[0])
@@ -92,7 +92,12 @@ class AdminInterface:
                            f(self.national_park.unitcode))
                 self.db.execute_query([qq])
                 ans = input('Press ENTER to continue')
-                return
+            return
+
+        print_header('Report Species')
+        print(
+            'Kindly enter the details of the species {} {} in the {} \n, press enter on empty string to put NULL'.format(
+                genus, spec_name, self.national_park.name))
 
         presence = Presence()
         presence.add()
@@ -104,10 +109,10 @@ class AdminInterface:
                                    f(self.national_park.unitcode),
                                    f(presence.nativeness),
                                    f(int(presence.is_attraction)),
-                                   f(presence.abundance_enum[presence.abundance - 1]),
-                                   f(presence.record_status_enum[presence.record_status - 1]),
+                                   f(presence.abundance),
+                                   f(presence.record_status),
                                    f(presence.record_date),
-                                   f(presence.occurrence_enum[presence.occurrence - 1])
+                                   f(presence.occurrence)
                                    )
         self.db.execute_query([qq])
         ans = input('Press ENTER to continue')
@@ -126,17 +131,19 @@ class AdminInterface:
         newvalue = None
         try:
             genus, spec_name = input("Enter the scientific name of the Species (format: genus specific name): ").split()
-            genus = genus.lower()
-            spec_name = spec_name.lower()
-            newvalue = int(input("Enter new total population: "))
+            qq = "SELECT presence_id FROM Presence WHERE genus = '{}' AND specific_name = '{}' AND" \
+                 " national_park = '{}'".format(genus, spec_name, self.national_park.unitcode)
+            rows = self.db.get_result(qq)
+
+            if len(rows) > 0:
+                target_presence = rows['presence_id']
+                qq = "UPDATE Presence SET current_population = {} " \
+                     "WHERE national_park = '{}' AND genus = '{}' AND specific_name = '{}') " \
+                    .format(newvalue, self.national_park, genus, spec_name)
+
         except ValueError as e:
             print(e)
 
-        query = "UPDATE Presence SET current_population = {} " \
-                "WHERE national_park = '{}' AND genus = '{}' AND specific_name = '{}') " \
-            .format(newvalue, self.national_park, genus, spec_name)
-
-        self.db.execute_query(query)
         ans = input('Press ENTER to continue')
 
     def service_info_report(self):

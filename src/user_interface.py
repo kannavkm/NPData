@@ -39,8 +39,8 @@ class UserInterface:
         repeat_and_error(newUser.get_password)()
         repeat_and_error(newUser.get_contact)()
 
-        query = ["UPDATE User SET username = {} , password = {} , " \
-                 "contact_number = {} where user_id = {}".format(
+        query = ["UPDATE User SET username = '{}' , password = '{}' , " \
+                 "contact_number = '{}' where user_id = {}".format(
             newUser.username, newUser.password, newUser.contact_number, self.current_user.user_id)]
 
         res = self.db.execute_query(query)
@@ -291,14 +291,13 @@ class UserInterface:
                     time.sleep(2.5)
                     continue
 
-                i = 0
-                for row in rows:
-                    print('{}. {}'.format(i + 1, row['name']))
-                    i += 1
-
                 print_header('Cancellation')
 
-                print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
+                i = 0
+                for row in rows:
+                    print('{}. {}'.format(i + 1, row['booking_id']))
+                    i += 1
+
                 booking_code = int(input('Enter the corresponding number of the booking you want to book for:'))
                 if not syntax.validate_range(booking_code, 0, len(rows) - 1):
                     perror('invalid Input')

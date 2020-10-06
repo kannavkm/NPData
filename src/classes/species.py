@@ -140,7 +140,7 @@ class Species:
 			return q
 
 		except ValueError as e:
-			perror(e.args[0])
+			perror(e)
 
 
 class Presence:
