@@ -2,7 +2,7 @@ from tabulate import tabulate
 
 from src.classes.employee import *
 from src.classes.national_park import NationalPark
-from src.classes.species import Species, Presence
+from src.classes.species import Species, Presence, Demography
 from src.utils.utils import *
 
 
@@ -14,8 +14,9 @@ class AdminInterface:
             'Get National Park Report',
             'Modify/Add Species Data',
             'Add Employee',
-            'Add Species Data',
+            'Add Demography',
             'Service Information',
+            'Features Information',
             'Exit'
         ]
         self.functions = [
@@ -24,6 +25,7 @@ class AdminInterface:
             self.add_employee,
             self.add_demography,
             self.service_info_report,
+            self.get_features
         ]
         self.curr_opt = 0
 
@@ -45,7 +47,7 @@ class AdminInterface:
                 " AND P.national_park = '{}'".format(self.national_park.unitcode)
         rows = self.db.get_result(query)
         print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue >>')
 
     def add_species(self):
         print_header('Species')
@@ -65,7 +67,7 @@ class AdminInterface:
 
         if syntax.empty(rows):
             print_header('New Species')
-            print("This is a new species, Kindly enter the complete details of the species")
+            print("This is a new species, Kindly enter the complete details of the species: ")
             temp = Species(self.db)
             q = temp.add()
             self.db.execute_query(q)
@@ -75,8 +77,8 @@ class AdminInterface:
         rows = self.db.get_result(qq)
 
         if len(rows) > 0:
-            ans = input("That species is already recorded in {} would you like to update the status(y/n)").format(
-                self.national_park.unitcode)
+            ans = input("\nThat species is already recorded in {} would you like to update the status? (y/n): ".format(
+                self.national_park.unitcode))
             if ans == "y":
                 presence = Presence()
                 presence.update(rows[0])
@@ -91,8 +93,13 @@ class AdminInterface:
                            f(spec_name),
                            f(self.national_park.unitcode))
                 self.db.execute_query([qq])
-                ans = input('Press ENTER to continue')
-                return
+                ans = input('\nPress ENTER to continue >> ')
+            return
+
+        print_header('Report Species')
+        print(
+            'Kindly enter the details of the species {} {} in the {} \n, Press ENTER on empty string to put NULL'.format(
+                genus, spec_name, self.national_park.name))
 
         presence = Presence()
         presence.add()
@@ -104,19 +111,18 @@ class AdminInterface:
                                    f(self.national_park.unitcode),
                                    f(presence.nativeness),
                                    f(int(presence.is_attraction)),
-                                   f(presence.abundance_enum[presence.abundance - 1]),
-                                   f(presence.record_status_enum[presence.record_status - 1]),
+                                   f(presence.abundance),
+                                   f(presence.record_status),
                                    f(presence.record_date),
-                                   f(presence.occurrence_enum[presence.occurrence - 1])
-                                   )
+                                   f(presence.occurrence))
         self.db.execute_query([qq])
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue >> ')
 
     def add_employee(self):
         print_header("Add Employee")
         emp = Employee(self.db, self.national_park).hire
         self.db.execute_query(emp())
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue >> ')
 
     def add_demography(self):
 
@@ -126,18 +132,24 @@ class AdminInterface:
         newvalue = None
         try:
             genus, spec_name = input("Enter the scientific name of the Species (format: genus specific name): ").split()
-            genus = genus.lower()
-            spec_name = spec_name.lower()
-            newvalue = int(input("Enter new total population: "))
+            qq = "SELECT presence_id FROM Presence WHERE genus = '{}' AND specific_name = '{}' AND" \
+                 " national_park = '{}'".format(genus, spec_name, self.national_park.unitcode)
+            rows = self.db.get_result(qq)
+
+            if len(rows) > 0:
+                target_presence = rows['presence_id']
+                demo = Demography()
+                demo.add()
+                qq = "INSERT INTO Demography(presence_id, time_stamp, total_population, average_lifespan)" \
+                     " VALUES({}, NOW(), {}, {})".format(target_presence,
+                                                         demo.total_population,
+                                                         demo.average_lifespan)
+                self.db.execute_query([qq])
+
         except ValueError as e:
             print(e)
 
-        query = "UPDATE Presence SET current_population = {} " \
-                "WHERE national_park = '{}' AND genus = '{}' AND specific_name = '{}') " \
-            .format(newvalue, self.national_park, genus, spec_name)
-
-        self.db.execute_query(query)
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue')
 
     def service_info_report(self):
         print_header("Service Report")
@@ -149,7 +161,24 @@ class AdminInterface:
             self.national_park.unitcode)
         rows = self.db.get_result(query)
         print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
-        ans = input('Press ENTER to continue')
+        ans = input('\nPress ENTER to continue')
+
+    def get_features(self):
+
+        print_header("Features")
+        des_rating = float(input("Enter the desired rating value: "))
+
+        print("Here is the list of all features that are rated more than {}\n".format(des_rating))
+
+        query = "SELECT A.feature_name, A.availability, avg(rating) from Features A," \
+                " Feature_Feedback B where A.feature_id = B.feature_id and A.feature_id" \
+                " in ( SELECT feature_id from Zone C , Zone_contains D where" \
+                " C.zone_number = D.zone_number and C.belongs_to = '{}' ) " \
+                "GROUP BY B.feature_id having avg(rating) >= {}".format(self.national_park.unitcode, des_rating)
+
+        rows = self.db.get_result(query)
+        print(tabulate(rows, headers="keys", tablefmt="fancy_grid"))
+        ans = input('\nPress ENTER to continue >> ')
 
     def loop(self):
         print_header('Admin Interface')

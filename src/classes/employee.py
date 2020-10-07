@@ -85,7 +85,7 @@ class Employee:
                 i += 1
 
             self.works_for_dno = int(input("Enter Department Number: "))
-            if not syntax.validate_range(self.works_for_dno, 0, len(rows) - 1):
+            if not syntax.validate_range(self.works_for_dno, 1, len(rows)):
                 perror('Invalid Input')
                 return
 

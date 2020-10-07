@@ -49,10 +49,7 @@ class Species:
 	def get_taxon_code(self):
 		self.taxonomy_code = input("Enter the taxonomy-code of the Species:")
 		if not syntax.empty(self.taxonomy_code):
-			if len(self.taxonomy_code) == 10:
-				return True
-			else:
-				perror("Must be of length 10")
+			return True
 		else:
 			perror("taxonomy code cannot be null")
 		return False
@@ -140,7 +137,7 @@ class Species:
 			return q
 
 		except ValueError as e:
-			perror(e.args[0])
+			perror(e)
 
 
 class Presence:
@@ -274,3 +271,30 @@ class Presence:
 		except ValueError as e:
 			perror('Invalid Input was enterred')
 			a = input("Press enter to exit")
+
+
+class Demography:
+	def __init__(self):
+		self.census_date = None
+		self.total_population = None
+		self.average_lifespan = None
+
+	def get_census_date(self):
+		self.census_date = input("Enter date of census (YYYY-MM-DD): ")
+		if not syntax.validate_date(self.census_date):
+			self.census_date = None
+
+	def get_population(self):
+		self.total_population = int(input('Enter the current population of the species in the National Park:'))
+
+	def get_avg_lifespan(self):
+		self.average_lifespan = float(input('Enter the recorded average lifespan in the census'))
+
+	def add(self):
+		try:
+			ask(self.get_census_date)()
+			ask(self.get_population())()
+			ask(self.get_avg_lifespan)
+
+		except ValueError as e:
+			pass

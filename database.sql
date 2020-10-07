@@ -32,7 +32,7 @@ CREATE TABLE `Booking`
     KEY `user_id` (`user_id`),
     CONSTRAINT `Booking_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 22
+  AUTO_INCREMENT = 24
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -45,7 +45,9 @@ LOCK TABLES `Booking` WRITE;
 /*!40000 ALTER TABLE `Booking`
     DISABLE KEYS */;
 INSERT INTO `Booking`
-VALUES (1, 1, 1, 0);
+VALUES (1, 1, 1, 0),
+       (22, 8, 2, 0),
+       (23, 6, 1, 1);
 /*!40000 ALTER TABLE `Booking`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -82,7 +84,8 @@ LOCK TABLES `Booking_service` WRITE;
     DISABLE KEYS */;
 INSERT INTO `Booking_service`
 VALUES (1, 1, 1200, '2020-10-05'),
-       (1, 2, 1000, '2020-10-06');
+       (1, 2, 1000, '2020-10-06'),
+       (22, 2, 1000, '2020-10-04');
 /*!40000 ALTER TABLE `Booking_service`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -118,6 +121,7 @@ VALUES ('a', 'a'),
        ('Aves', 'Ciconiiformes'),
        ('Aves', 'Otidiformes'),
        ('Mammalia', 'Carnivora'),
+       ('mammalia', 'perissodactyla'),
        ('Mammalia', 'Proboscidea'),
        ('Reptilia', 'Squamata'),
        ('rosids', 'Fabales'),
@@ -368,7 +372,8 @@ VALUES ('a', 'a'),
        ('Moraceae', 'Ficus'),
        ('Otididae', 'Ardeotis'),
        ('Pythonidae', 'Malayopython'),
-       ('Pythonidae', 'Python');
+       ('Pythonidae', 'Python'),
+       ('rhinoderotidae', 'rhinoceros');
 /*!40000 ALTER TABLE `Family_classification`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -383,14 +388,14 @@ DROP TABLE IF EXISTS `Feature_Feedback`;
 CREATE TABLE `Feature_Feedback`
 (
     `user_id`    int NOT NULL,
-    `feature_id` int            DEFAULT NULL,
+    `feature_id` int NOT NULL,
     `rating`     decimal(10, 0) DEFAULT NULL COMMENT 'between 1 and 5',
     `remarks`    longtext,
     `date`       datetime       DEFAULT NULL,
-    PRIMARY KEY (`user_id`),
+    PRIMARY KEY (`user_id`, `feature_id`),
     KEY `feature_id` (`feature_id`),
-    CONSTRAINT `Feature_Feedback_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    CONSTRAINT `Feature_Feedback_ibfk_4` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`) ON DELETE CASCADE
+    CONSTRAINT `Feature_Feedback_Features_feature_id_fk` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`) ON DELETE CASCADE,
+    CONSTRAINT `Feature_Feedback_User_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -403,6 +408,16 @@ CREATE TABLE `Feature_Feedback`
 LOCK TABLES `Feature_Feedback` WRITE;
 /*!40000 ALTER TABLE `Feature_Feedback`
     DISABLE KEYS */;
+INSERT INTO `Feature_Feedback`
+VALUES (1, 1, 4, 'Very good', '2018-01-30 00:00:00'),
+       (1, 2, 3, 'cool', '2017-01-30 00:00:00'),
+       (2, 1, 1, 'didnt like it', '2018-01-23 00:00:00'),
+       (2, 22, 4, 'awesome', '2018-02-13 00:00:00'),
+       (3, 2, 2, 'ok ok', '2016-03-24 00:00:00'),
+       (3, 6, 4, 'niiceee', '2018-01-11 00:00:00'),
+       (4, 4, 3, 'Very very nice', '2012-08-14 00:00:00'),
+       (6, 11, 4, 'superb', '2018-05-30 00:00:00'),
+       (8, 13, 5, 'loved it', '2018-06-12 00:00:00');
 /*!40000 ALTER TABLE `Feature_Feedback`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -452,6 +467,7 @@ CREATE TABLE `Features`
     `geohash`      varchar(255) DEFAULT NULL,
     PRIMARY KEY (`feature_id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 28
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -463,6 +479,34 @@ CREATE TABLE `Features`
 LOCK TABLES `Features` WRITE;
 /*!40000 ALTER TABLE `Features`
     DISABLE KEYS */;
+INSERT INTO `Features`
+VALUES (1, 'Lodging', 1, 'gygeryuyui'),
+       (2, 'Trail', 1, 'gygerthyuj'),
+       (3, 'Trail', 1, 'gygeryuyuk'),
+       (4, 'Lodging', 0, 'gygeryuyus'),
+       (5, 'View Point', 0, 'gygeryuyuq'),
+       (6, 'Lodging', 1, 'oikjioppqr'),
+       (7, 'Trail', 1, 'oikjioppqf'),
+       (8, 'View Point', 1, 'oikjioppqk'),
+       (9, 'Lodging', 0, 'oikjioppqt'),
+       (10, 'View Point', 1, 'oikjioppqk'),
+       (11, 'View Point', 1, 'hhopuhjkok'),
+       (12, 'Public Facility', 1, 'hhopuhjkoy'),
+       (13, 'Public Facility', 1, 'erikuhjnok'),
+       (14, 'Washroom', 1, 'erikuhjnoj'),
+       (15, 'Lodging', 1, 'erikuhjnoi'),
+       (16, 'Trail', 1, 'erikuhjnoo'),
+       (17, 'Trail', 1, 'hhikuhjnjk'),
+       (18, 'Lodging', 0, 'hhikuhjnjs'),
+       (19, 'View Point', 0, 'hhikuhjnjq'),
+       (20, 'Lodging', 1, 'hhikuhjnjr'),
+       (21, 'Trail', 1, 'hhikuhjnjf'),
+       (22, 'View Point', 1, 'gyyghhetwk'),
+       (23, 'Lodging', 0, 'gyyghhetwt'),
+       (24, 'View Point', 1, 'gyyghhetwk'),
+       (25, 'View Point', 1, 'gyyghhetwk'),
+       (26, 'Public Facility', 1, 'gyyghhetwy'),
+       (27, 'Public Facility', 1, 'gyyghhetwk');
 /*!40000 ALTER TABLE `Features`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -567,6 +611,14 @@ CREATE TABLE `Lodging`
 LOCK TABLES `Lodging` WRITE;
 /*!40000 ALTER TABLE `Lodging`
     DISABLE KEYS */;
+INSERT INTO `Lodging`
+VALUES (1, 'Oyo Hotel', 'raj', 35, 10, '8876885431'),
+       (4, 'Radisson Hotel', 'sanchit', 20, 19, '8836885431'),
+       (6, 'Travelodge', 'sanchit', 25, 18, '8876884431'),
+       (9, 'Knights Inn', 'shami', 30, 30, '8876885031'),
+       (15, 'Oyo clubhouse', 'raj', 35, 10, '8876285431'),
+       (20, 'Taj Banjara', 'sanchit', 200, 190, '8836225431'),
+       (23, 'Treebo', 'gurkirat', 25, 18, '8876882431');
 /*!40000 ALTER TABLE `Lodging`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -642,6 +694,9 @@ VALUES ('a', 'a'),
        ('ciconiiformes', 'Ciconiidae'),
        ('Fabales', 'Fabaceae'),
        ('Otidiformes', 'Otididae'),
+       ('perissodactyla', 'rhicocerotidae'),
+       ('perissodactyla', 'rhinocerotidae'),
+       ('perissodactyla', 'rhinoderotidae'),
        ('Proboscidea', 'Elephantidae'),
        ('Rosales', 'Moraceae'),
        ('Squamata', 'Pythonidae');
@@ -715,7 +770,7 @@ CREATE TABLE `Presence`
     CONSTRAINT `Presence_ibfk_1` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`),
     CONSTRAINT `Presence_ibfk_2` FOREIGN KEY (`genus`, `specific_name`) REFERENCES `Species` (`genus`, `specific_name`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 9
+  AUTO_INCREMENT = 10
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -734,7 +789,8 @@ VALUES (1, 'Panthera', 'tigris', 'CRBT', 1, 1, 'uncommon', 'Verified', '2010-06-
        (4, 'Ficus', 'religiosa', 'KNHA', 1, 0, 'common', 'Verified', '2016-12-31', 'Full Year', 22),
        (5, 'Python', 'molurus', 'KLDO', 1, 0, 'uncommon', 'Non Verified', '2015-08-20', 'Seasonal', 44),
        (6, 'Ardeotis', 'nigriceps', 'KLDO', 1, 1, 'rare', 'Non Verified', '2010-10-10', 'Seasonal', 56),
-       (7, 'Python', 'molurus', 'KNHA', 1, 0, 'uncommon', 'Verified', '2018-11-15', 'Full Year', 232);
+       (7, 'Python', 'molurus', 'KNHA', 1, 0, 'uncommon', 'Verified', '2018-11-15', 'Full Year', 232),
+       (9, 'rhinoceros', 'unicornis', 'CRBT', 1, 1, 'rare', 'Verified', '2020-01-01', 'Full Year', NULL);
 /*!40000 ALTER TABLE `Presence`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -765,6 +821,11 @@ CREATE TABLE `Public_Facilities`
 LOCK TABLES `Public_Facilities` WRITE;
 /*!40000 ALTER TABLE `Public_Facilities`
     DISABLE KEYS */;
+INSERT INTO `Public_Facilities`
+VALUES (12, 'cafeteria', 'kannav'),
+       (13, 'gift-shop', 'triansh'),
+       (26, 'cafeteria', 'kannav'),
+       (27, 'gift-shop', 'triansh');
 /*!40000 ALTER TABLE `Public_Facilities`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1022,7 +1083,7 @@ CREATE TABLE `Species`
     `taxonomy_code`    varchar(10)                                                                                                              NOT NULL,
     `name`             varchar(255)                                                                                                             NOT NULL,
     `vulnerability`    enum ('Extinct','Extinct from wild','Critically Endangered','Endangered','Vulnerable','Near Threatened','Least Concern') NOT NULL,
-    `average_lifespan` decimal(10, 0)                                                                                                           NOT NULL,
+    `average_lifespan` decimal(10, 0) DEFAULT NULL,
     PRIMARY KEY (`genus`, `specific_name`),
     UNIQUE KEY `taxonomy_code` (`taxonomy_code`),
     UNIQUE KEY `name` (`name`),
@@ -1040,13 +1101,13 @@ LOCK TABLES `Species` WRITE;
 /*!40000 ALTER TABLE `Species`
     DISABLE KEYS */;
 INSERT INTO `Species`
-VALUES ('a', 'a', '1234567890', 'aa', 'Extinct', 1),
-       ('Ardeotis', 'nigriceps', '172692', 'Great Indian Bustard', 'Critically Endangered', 12),
+VALUES ('Ardeotis', 'nigriceps', '172692', 'Great Indian Bustard', 'Critically Endangered', 12),
        ('Ficus', 'religiosa', '66387', 'Peepal Tree', 'Least Concern', 1000),
        ('Leptoptilos', 'dubius', '1940340', 'Greater adjutant', 'Endangered', 35),
        ('Panthera', 'leo', '83386', 'Asiatic lion', 'Endangered', 18),
        ('Panthera', 'tigris', '74535', 'Royal Bengal Tiger', 'Endangered', 10),
        ('Python', 'molurus', '621282', 'Indian rock python', 'Vulnerable', 38),
+       ('rhinoceros', 'unicornis', '1234567891', 'indian rhinoceros', 'Vulnerable', NULL),
        ('Saraca', 'asoca', '1073321', 'Ashoka Tree', 'Vulnerable', 50);
 /*!40000 ALTER TABLE `Species`
     ENABLE KEYS */;
@@ -1300,13 +1361,13 @@ LOCK TABLES `Sub_service_timings` WRITE;
 INSERT INTO `Sub_service_timings`
 VALUES (1, 40, 40, '2020-10-04', 1000.00),
        (1, 40, 44, '2020-10-05', 1200.00),
-       (1, 40, 40, '2020-10-06', 1000.00),
+       (1, 39, 40, '2020-10-06', 1000.00),
        (1, 40, 40, '2020-10-07', 1000.00),
        (1, 40, 40, '2020-10-08', 1000.00),
        (1, 40, 44, '2020-10-09', 1200.00),
        (1, 40, 40, '2020-10-10', 1000.00),
        (1, 40, 40, '2020-10-11', 1000.00),
-       (2, 12, 12, '2020-10-04', 1000.00),
+       (2, 11, 12, '2020-10-04', 1000.00),
        (2, 12, 12, '2020-10-05', 1200.00),
        (2, 11, 12, '2020-10-06', 1000.00),
        (2, 12, 12, '2020-10-07', 1000.00),
@@ -1345,6 +1406,17 @@ CREATE TABLE `Trail`
 LOCK TABLES `Trail` WRITE;
 /*!40000 ALTER TABLE `Trail`
     DISABLE KEYS */;
+INSERT INTO `Trail`
+VALUES (2, 'Boo Hoff Trail', 10,
+        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@'),
+       (3, 'Mary\'s Rock Trail', 12,
+        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0\"@\0\0\0\0\0\0@\0\0\0\0\0\0$@\0\0\0\0\0\0@'),
+       (16, 'Bumpass Hell Trail', 11,
+        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0 @\0\0\0\0\0\0$@\0\0\0\0\0\01@'),
+       (17, 'New world Trail', 12,
+        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0 @\0\0\0\0\0\0$@\0\0\0\0\0\01@'),
+       (21, 'Today Trail', 11,
+        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0 @\0\0\0\0\0\0$@\0\0\0\0\0\01@');
 /*!40000 ALTER TABLE `Trail`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1403,7 +1475,7 @@ CREATE TABLE `User`
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 8
+  AUTO_INCREMENT = 9
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1422,7 +1494,8 @@ VALUES (1, 'Mekhi Schmeler', 'lindgren.ezra@morrlibsu.ga', 'abcd', '4358822482',
        (4, 'Fritz Lockman', 'eyon.wehner@malomies.com', 'abcd', '2751300966', '2020-10-23'),
        (5, 'Lane Von', 'kjast@kingleo.us', 'abcd', '3847866482', '2020-10-30'),
        (6, 'kannav mehta', 'kannav@email.com', 'abcd', '1234567890', '2000-01-01'),
-       (7, 'triansh', 'triansh@email.com', 'abcd', '9982443531', '2000-10-10');
+       (7, 'triansh', 'triansh@email.com', 'abcd', '9982443531', '2000-10-10'),
+       (8, 'suchitra', 'suchitra@email.com', 'abcd', '1234567890', '2000-01-01');
 /*!40000 ALTER TABLE `User`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1452,6 +1525,15 @@ CREATE TABLE `ViewPoints`
 LOCK TABLES `ViewPoints` WRITE;
 /*!40000 ALTER TABLE `ViewPoints`
     DISABLE KEYS */;
+INSERT INTO `ViewPoints`
+VALUES (5, 'Stony Hill Overlook'),
+       (8, 'Yosemite Falls'),
+       (10, 'Snake River Overlook'),
+       (11, 'Hurricane Ridge Visitor Center'),
+       (19, 'New World Overlook'),
+       (22, 'Old Monk Falls'),
+       (24, 'Death Lake Overlook'),
+       (25, 'Orchid Visitor Center');
 /*!40000 ALTER TABLE `ViewPoints`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1542,12 +1624,14 @@ DROP TABLE IF EXISTS `Zone_contains`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Zone_contains`
 (
-    `zone_number` int NOT NULL,
-    `feature_id`  int NOT NULL,
-    PRIMARY KEY (`zone_number`, `feature_id`),
+    `zone_number` int        NOT NULL,
+    `feature_id`  int        NOT NULL,
+    `belongs_to`  varchar(4) NOT NULL,
+    PRIMARY KEY (`zone_number`, `feature_id`, `belongs_to`),
     KEY `feature_id` (`feature_id`),
-    CONSTRAINT `Zone_contains_ibfk_1` FOREIGN KEY (`zone_number`) REFERENCES `Zone` (`zone_number`) ON DELETE CASCADE,
-    CONSTRAINT `Zone_contains_ibfk_2` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`)
+    KEY `Zone_contains_Zone_zone_number_belongs_to_fk` (`zone_number`, `belongs_to`),
+    CONSTRAINT `Zone_contains_ibfk_2` FOREIGN KEY (`feature_id`) REFERENCES `Features` (`feature_id`),
+    CONSTRAINT `Zone_contains_Zone_zone_number_belongs_to_fk` FOREIGN KEY (`zone_number`, `belongs_to`) REFERENCES `Zone` (`zone_number`, `belongs_to`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -1560,6 +1644,34 @@ CREATE TABLE `Zone_contains`
 LOCK TABLES `Zone_contains` WRITE;
 /*!40000 ALTER TABLE `Zone_contains`
     DISABLE KEYS */;
+INSERT INTO `Zone_contains`
+VALUES (1, 1, 'CRBT'),
+       (1, 2, 'CRBT'),
+       (1, 3, 'CRBT'),
+       (1, 4, 'CRBT'),
+       (1, 5, 'CRBT'),
+       (2, 6, 'CRBT'),
+       (2, 7, 'CRBT'),
+       (2, 8, 'CRBT'),
+       (2, 9, 'CRBT'),
+       (3, 10, 'CRBT'),
+       (3, 11, 'CRBT'),
+       (3, 12, 'CRBT'),
+       (1, 13, 'KNHA'),
+       (1, 14, 'KNHA'),
+       (1, 15, 'KNHA'),
+       (1, 16, 'KNHA'),
+       (2, 17, 'KNHA'),
+       (2, 18, 'KNHA'),
+       (2, 19, 'KNHA'),
+       (2, 20, 'KNHA'),
+       (2, 21, 'KNHA'),
+       (1, 22, 'KZRG'),
+       (1, 23, 'KZRG'),
+       (1, 24, 'KZRG'),
+       (1, 25, 'KZRG'),
+       (1, 26, 'KZRG'),
+       (1, 27, 'KZRG');
 /*!40000 ALTER TABLE `Zone_contains`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1611,4 +1723,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-06  0:12:19
+-- Dump completed on 2020-10-06 16:56:16
