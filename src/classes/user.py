@@ -48,8 +48,8 @@ class User:
             # print(query)
             return query
 
-        except ValueError as e:
-            print(e.args[0])
+        except Exception as e:
+            print("error")
 
     def login(self):
         try:
