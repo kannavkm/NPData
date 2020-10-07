@@ -58,7 +58,7 @@ class AdminInterface:
                 "Enter the scientific name of the Species (format: genus specific name): ").split()
             genus = genus.lower()
             spec_name = spec_name.lower()
-        except ValueError as e:
+        except Exception as e:
             print(e)
 
         qq = "SELECT * FROM Species WHERE genus = '{}' AND specific_name = '{}'".format(genus, spec_name)
@@ -110,7 +110,7 @@ class AdminInterface:
                                    f(spec_name),
                                    f(self.national_park.unitcode),
                                    f(presence.nativeness),
-                                   f(int(presence.is_attraction)),
+                                   f(presence.is_attraction),
                                    f(presence.abundance),
                                    f(presence.record_status),
                                    f(presence.record_date),
@@ -137,7 +137,7 @@ class AdminInterface:
             rows = self.db.get_result(qq)
 
             if len(rows) > 0:
-                target_presence = rows['presence_id']
+                target_presence = rows[0]['presence_id']
                 demo = Demography()
                 demo.add()
                 qq = "INSERT INTO Demography(presence_id, time_stamp, total_population, average_lifespan)" \
@@ -146,7 +146,7 @@ class AdminInterface:
                                                          demo.average_lifespan)
                 self.db.execute_query([qq])
 
-        except ValueError as e:
+        except Exception as e:
             print(e)
 
         ans = input('\nPress ENTER to continue')
@@ -170,11 +170,11 @@ class AdminInterface:
 
         print("Here is the list of all features that are rated more than {}\n".format(des_rating))
 
-        query = "SELECT A.feature_name, A.availability, avg(rating) from Features A," \
+        query = "SELECT A.feature_id, A.feature_name, A.availability, avg(rating) from Features A," \
                 " Feature_Feedback B where A.feature_id = B.feature_id and A.feature_id" \
                 " in ( SELECT feature_id from Zone C , Zone_contains D where" \
                 " C.zone_number = D.zone_number and C.belongs_to = '{}' ) " \
-                "GROUP BY B.feature_id having avg(rating) >= {}".format(self.national_park.unitcode, des_rating)
+                "GROUP BY B.feature_id having avg(rating) >= {} ORDER BY avg(rating) DESC".format(self.national_park.unitcode, des_rating)
 
         rows = self.db.get_result(query)
         print(tabulate(rows, headers="keys", tablefmt="fancy_grid"))
@@ -195,5 +195,5 @@ class AdminInterface:
                     return
                 else:
                     self.functions[self.curr_opt - 1]()
-        except ValueError as e:
+        except Exception as e:
             perror(e.args[0])

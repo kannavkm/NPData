@@ -23,7 +23,7 @@ class NationalPark:
                 i += 1
 
             row = int(input("Please enter the corresponding number to access National Park: "))
-            if not syntax.validate_range(row, 0, len(rows) - 1):
+            if not syntax.validate_range(row, 1, len(rows)):
                 perror('Invalid Input. Please choose again!')
                 continue
 

@@ -136,8 +136,8 @@ class Species:
 
 			return q
 
-		except ValueError as e:
-			perror(e)
+		except Exception as e:
+			perror("error")
 
 
 class Presence:
@@ -236,8 +236,8 @@ class Presence:
 			if self.occurrence is not None:
 				self.occurrence = self.occurrence_enum[self.occurrence - 1]
 
-		except ValueError as e:
-			pass
+		except Exception as e:
+			perror("error")
 
 	def update(self, row):
 		try:
@@ -268,7 +268,7 @@ class Presence:
 			else:
 				self.occurrence = row['occurrence']
 
-		except ValueError as e:
+		except Exception as e:
 			perror('Invalid Input was enterred')
 			a = input("Press enter to exit")
 
@@ -293,8 +293,8 @@ class Demography:
 	def add(self):
 		try:
 			ask(self.get_census_date)()
-			ask(self.get_population())()
-			ask(self.get_avg_lifespan)
+			ask(self.get_population)()
+			ask(self.get_avg_lifespan)()
 
-		except ValueError as e:
+		except Exception as e:
 			pass

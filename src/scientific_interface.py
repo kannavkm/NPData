@@ -73,7 +73,7 @@ class ScientificInterface:
             a = datetime.datetime(year=int(y1), month=1, day=1)
             a = datetime.datetime(year=int(y2), month=12, day=31)
             return True
-        except ValueError:
+        except Exception:
             return False
 
     def getDemographyOfPeriod(self):
@@ -176,8 +176,8 @@ class ScientificInterface:
                     "Enter the scientific name of the Species (format: genus specific_name): ").split()
                 genus = genus.lower()
                 spec_name = spec_name.lower()
-            except ValueError as e:
-                print(e)
+            except Exception as e:
+                perror("error")
 
             query = " SELECT N.name, P.genus, P.specific_name, S.name, " \
                     " P.abundance, P.occurrence FROM National_Park N, Presence P, Species S" \
@@ -220,7 +220,7 @@ class ScientificInterface:
             newLink = input("Enter new Data Link: ")
             newType = input("Enter new Data Type: ")
 
-            ch = input("Are you sue you want to update? (y/n): ")
+            ch = input("Are you sure you want to update? (y/n): ")
             if (ch != 'y'):
                 return
 
@@ -243,5 +243,5 @@ class ScientificInterface:
                     return
                 else:
                     self.functions[self.curr_opt - 1]()
-        except ValueError as e:
-            perror(e.args[0])
+        except Exception as e:
+            perror("error")

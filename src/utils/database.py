@@ -32,6 +32,6 @@ class Database:
                 psuccess("Success")
             except Exception as e:
                 self.con.rollback()
-                perror("Failed to execute the operation", e)
+                perror("Failed to execute the operation")
                 return False
         return True
