@@ -309,6 +309,21 @@ CREATE TABLE `Crosses`
 LOCK TABLES `Crosses` WRITE;
 /*!40000 ALTER TABLE `Crosses`
     DISABLE KEYS */;
+INSERT INTO `Crosses`
+VALUES (1, 2),
+       (4, 2),
+       (5, 2),
+       (1, 3),
+       (4, 3),
+       (5, 3),
+       (6, 7),
+       (8, 7),
+       (9, 7),
+       (10, 7),
+       (18, 17),
+       (19, 17),
+       (20, 17),
+       (21, 17);
 /*!40000 ALTER TABLE `Crosses`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -328,7 +343,7 @@ CREATE TABLE `Data`
     `data_type`   varchar(255) DEFAULT NULL,
     PRIMARY KEY (`data_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
+  AUTO_INCREMENT = 11
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -344,7 +359,13 @@ INSERT INTO `Data`
 VALUES (1, 'Detailed study on great indian bustard and their behaviour', 'dat1.json', 'JSON'),
        (2, 'Description on tigers found in India', 'dt1.json', 'JSON'),
        (3, 'Behaviour of Snakes', 'dat2.xls', 'Excel'),
-       (4, 'Wildlife in Kanha National Park', 'dat3.xls', 'Excel');
+       (4, 'Wildlife in Kanha National Park', 'dat3.xls', 'Excel'),
+       (5, 'Effects of venom', 'solve.json', 'json'),
+       (6, 'Protecting endangered species', 'nothere.xls', 'Excel'),
+       (7, 'New ways for conservation in National Parks', 'notthere.xls', 'Excel'),
+       (8, 'Wildlife and Climate change', 'wrong.sql', 'SQL'),
+       (9, 'Breeding in Crocodiles', 'main.py', 'Python'),
+       (10, 'Indigenous Species vs Invaders', 'utils.py', 'Python');
 /*!40000 ALTER TABLE `Data`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -710,33 +731,33 @@ LOCK TABLES `Features` WRITE;
 /*!40000 ALTER TABLE `Features`
     DISABLE KEYS */;
 INSERT INTO `Features`
-VALUES (1, 'Lodging', 1, 'gygeryuyui'),
-       (2, 'Trail', 1, 'gygerthyuj'),
-       (3, 'Trail', 1, 'gygeryuyuk'),
-       (4, 'Lodging', 0, 'gygeryuyus'),
-       (5, 'View Point', 0, 'gygeryuyuq'),
-       (6, 'Lodging', 1, 'oikjioppqr'),
-       (7, 'Trail', 1, 'oikjioppqf'),
-       (8, 'View Point', 1, 'oikjioppqk'),
-       (9, 'Lodging', 0, 'oikjioppqt'),
-       (10, 'View Point', 1, 'oikjioppqk'),
-       (11, 'View Point', 1, 'hhopuhjkok'),
-       (12, 'Public Facility', 1, 'hhopuhjkoy'),
-       (13, 'Public Facility', 1, 'erikuhjnok'),
+VALUES (1, 'Oyo Hotel', 1, 'gygeryuyui'),
+       (2, 'Boo Hoff Trail', 1, 'gygerthyuj'),
+       (3, 'New World Trail', 1, 'gygeryuyuk'),
+       (4, 'Radisson Hotel', 1, 'gygeryuyus'),
+       (5, 'Orchid Visitor Center', 1, 'gygeryuyuq'),
+       (6, 'Travelodge', 1, 'oikjioppqr'),
+       (7, 'Old World Trail', 1, 'oikjioppqf'),
+       (8, 'Hurricane Ridge Visitor Center', 1, 'oikjioppqk'),
+       (9, 'Oyo clubhouse', 1, 'oikjioppqt'),
+       (10, 'Yosemite Falls', 1, 'oikjioppqk'),
+       (11, 'Stony Hill Overlook', 1, 'hhopuhjkok'),
+       (12, 'cafeteria', 1, 'hhopuhjkoy'),
+       (13, 'gift-shop', 1, 'erikuhjnok'),
        (14, 'Washroom', 1, 'erikuhjnoj'),
        (15, 'Lodging', 1, 'erikuhjnoi'),
-       (16, 'Trail', 1, 'erikuhjnoo'),
-       (17, 'Trail', 1, 'hhikuhjnjk'),
-       (18, 'Lodging', 0, 'hhikuhjnjs'),
-       (19, 'View Point', 0, 'hhikuhjnjq'),
-       (20, 'Lodging', 1, 'hhikuhjnjr'),
-       (21, 'Trail', 1, 'hhikuhjnjf'),
-       (22, 'View Point', 1, 'gyyghhetwk'),
-       (23, 'Lodging', 0, 'gyyghhetwt'),
-       (24, 'View Point', 1, 'gyyghhetwk'),
-       (25, 'View Point', 1, 'gyyghhetwk'),
-       (26, 'Public Facility', 1, 'gyyghhetwy'),
-       (27, 'Public Facility', 1, 'gyyghhetwk');
+       (16, 'Yellow Brick Road', 1, 'erikuhjnoo'),
+       (17, 'Bumpass Hell Trail', 1, 'hhikuhjnjk'),
+       (18, 'Treebo', 1, 'hhikuhjnjs'),
+       (19, 'Snake River Overlook', 1, 'hhikuhjnjq'),
+       (20, 'Taj Banjara', 1, 'hhikuhjnjr'),
+       (21, 'Mary\'s Rock Trail', 1, 'hhikuhjnjf'),
+       (22, 'New World Overlook', 1, 'gyyghhetwk'),
+       (23, 'Knights Inn', 1, 'gyyghhetwt'),
+       (24, 'Old Monk Falls', 1, 'gyyghhetwk'),
+       (25, 'Death Lake Overlook', 1, 'gyyghhetwk'),
+       (26, 'gift-shop', 1, 'gyyghhetwy'),
+       (27, 'cafeteria', 1, 'gyyghhetwk');
 /*!40000 ALTER TABLE `Features`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -772,6 +793,14 @@ CREATE TABLE `Feeds_on`
 LOCK TABLES `Feeds_on` WRITE;
 /*!40000 ALTER TABLE `Feeds_on`
     DISABLE KEYS */;
+INSERT INTO `Feeds_on`
+VALUES ('gavialis', 'gangeticus', 'aix', 'sponsa'),
+       ('Panthera', 'leo', 'rusa', 'unicolor'),
+       ('panthera', 'pardus', 'axis', 'axis'),
+       ('panthera', 'tigris', 'axis', 'axis'),
+       ('Panthera', 'leo', 'axis', 'axis'),
+       ('panthera', 'pardus', 'rusa', 'unicolor'),
+       ('panthera', 'tigris', 'rusa', 'unicolor');
 /*!40000 ALTER TABLE `Feeds_on`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -841,13 +870,13 @@ LOCK TABLES `Lodging` WRITE;
 /*!40000 ALTER TABLE `Lodging`
     DISABLE KEYS */;
 INSERT INTO `Lodging`
-VALUES (1, 'Oyo Hotel', 'raj', 35, 10, '8876885431'),
-       (4, 'Radisson Hotel', 'sanchit', 20, 19, '8836885431'),
-       (6, 'Travelodge', 'sanchit', 25, 18, '8876884431'),
-       (9, 'Knights Inn', 'shami', 30, 30, '8876885031'),
-       (15, 'Oyo clubhouse', 'raj', 35, 10, '8876285431'),
-       (20, 'Taj Banjara', 'sanchit', 200, 190, '8836225431'),
-       (23, 'Treebo', 'gurkirat', 25, 18, '8876882431');
+VALUES (1, 'Lodging', 'raj', 35, 10, '8876885431'),
+       (4, 'Lodging', 'sanchit', 20, 19, '8836885431'),
+       (6, 'Lodging', 'sanchit', 25, 18, '8876884431'),
+       (9, 'Lodging', 'shami', 30, 30, '8876885031'),
+       (15, 'Lodging', 'raj', 35, 10, '8876285431'),
+       (20, 'Lodging', 'sanchit', 200, 190, '8836225431'),
+       (23, 'Lodging', 'gurkirat', 25, 18, '8876882431');
 /*!40000 ALTER TABLE `Lodging`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1072,10 +1101,10 @@ LOCK TABLES `Public_Facilities` WRITE;
 /*!40000 ALTER TABLE `Public_Facilities`
     DISABLE KEYS */;
 INSERT INTO `Public_Facilities`
-VALUES (12, 'cafeteria', 'kannav'),
-       (13, 'gift-shop', 'triansh'),
-       (26, 'cafeteria', 'kannav'),
-       (27, 'gift-shop', 'triansh');
+VALUES (12, 'Public Facility', 'kannav'),
+       (13, 'Public Facility', 'triansh'),
+       (26, 'Public Facility', 'kannav'),
+       (27, 'Public Facility', 'triansh');
 /*!40000 ALTER TABLE `Public_Facilities`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1104,6 +1133,9 @@ CREATE TABLE `Published`
 LOCK TABLES `Published` WRITE;
 /*!40000 ALTER TABLE `Published`
     DISABLE KEYS */;
+INSERT INTO `Published`
+VALUES (97231484, 'Journal of Natural Science'),
+       (97831614, 'Journal of Natural Science');
 /*!40000 ALTER TABLE `Published`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1137,6 +1169,10 @@ CREATE TABLE `Report`
 LOCK TABLES `Report` WRITE;
 /*!40000 ALTER TABLE `Report`
     DISABLE KEYS */;
+INSERT INTO `Report`
+VALUES ('Effects of venom on Humans', 5, NULL),
+       ('Report on great indian bustard and their behaviour', 1, 97231484),
+       ('Report on Behaviour of Snakes in corbett National Park', 3, 97831614);
 /*!40000 ALTER TABLE `Report`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1168,6 +1204,11 @@ CREATE TABLE `Report_coauthors`
 LOCK TABLES `Report_coauthors` WRITE;
 /*!40000 ALTER TABLE `Report_coauthors`
     DISABLE KEYS */;
+INSERT INTO `Report_coauthors`
+VALUES ('Report on great indian bustard and their behaviour', 1, 'James Halpert'),
+       ('Report on great indian bustard and their behaviour', 1, 'Michael Scott'),
+       ('Report on Behaviour of Snakes in corbett National Park', 3, 'Dwight'),
+       ('Report on Behaviour of Snakes in corbett National Park', 3, 'Pam');
 /*!40000 ALTER TABLE `Report_coauthors`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1191,7 +1232,7 @@ CREATE TABLE `Researcher`
     KEY `permit` (`permit`),
     CONSTRAINT `Researcher_ibfk_1` FOREIGN KEY (`permit`) REFERENCES `Permit` (`permit_id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
+  AUTO_INCREMENT = 11
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1208,7 +1249,12 @@ VALUES (1, 'Sarah Resendes', '7343976663', 'sarahresendes1411@rediff.com', 'Fran
        (2, 'Sunday Holladay', '8588261321', 'holladay.sunday@gmail.com', 'Brigham Young University', 2),
        (3, 'Joey Mershon', '5564105941', 'joeymer12@yahoo.com', 'University of Texas, Austin', 3),
        (4, 'Chuck Colpitts', '6653294177', 'chuck23@hotmail.com', 'University of California, Berkeley', 4),
-       (5, 'Jesusa Touchton', '8778670185', 'touchtonjesusa@gmail.com', 'Grinnell College', 5);
+       (5, 'Jesusa Touchton', '8778670185', 'touchtonjesusa@gmail.com', 'Grinnell College', 5),
+       (6, 'Greg Pikitis', '3829488933', 'greg@gmail.com', 'UCLA', 6),
+       (7, 'Gillian Maxwell', '3904930993', 'gmaxwell@gmail.com', 'MIT', 7),
+       (8, 'Wilhelm Rutherford', '8432893838', 'wwrutherford@hotmail.com', 'Harvard', 8),
+       (9, 'Neils Bohr', '3243243233', 'neilisbored@email.com', 'UCB', 9),
+       (10, 'Albert Einstien', '8392392838', 'relativityrocks@email.com', 'WII', 10);
 /*!40000 ALTER TABLE `Researcher`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1563,7 +1609,7 @@ CREATE TABLE `Study`
     CONSTRAINT `Study_ibfk_1` FOREIGN KEY (`researcher`) REFERENCES `Researcher` (`researcher_id`),
     CONSTRAINT `Study_ibfk_2` FOREIGN KEY (`national_park`) REFERENCES `National_Park` (`unit_code`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 4
+  AUTO_INCREMENT = 11
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1578,7 +1624,14 @@ LOCK TABLES `Study` WRITE;
 INSERT INTO `Study`
 VALUES (1, 'KNHA', 3, 'Case Study', '2016-03-10'),
        (2, 'CRBT', 4, 'Correlational Study', '2018-07-01'),
-       (3, 'KLDO', 1, 'Experimental Study', '2015-10-15');
+       (3, 'KLDO', 1, 'Experimental Study', '2015-10-15'),
+       (4, 'Mnas', 4, 'Case Study', '2017-01-06'),
+       (5, 'kzrg', 5, 'Clinical Trial Study', '2017-05-06'),
+       (6, 'KNHA', 6, 'Experimental Study', '2016-01-08'),
+       (7, 'CRBT', 7, 'Case Study', '2017-01-06'),
+       (8, 'KLDO', 8, 'Longitudinal Study', '2014-05-08'),
+       (9, 'Mnas', 9, 'Experimental Study', '2013-01-18'),
+       (10, 'kzrg', 10, 'Clinical Trial Study', '2017-01-06');
 /*!40000 ALTER TABLE `Study`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1614,7 +1667,13 @@ INSERT INTO `Study_data`
 VALUES (3, 1),
        (3, 2),
        (1, 3),
-       (2, 4);
+       (2, 4),
+       (4, 5),
+       (5, 6),
+       (10, 7),
+       (10, 8),
+       (8, 9),
+       (9, 10);
 /*!40000 ALTER TABLE `Study_data`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1648,11 +1707,25 @@ LOCK TABLES `Study_species` WRITE;
 /*!40000 ALTER TABLE `Study_species`
     DISABLE KEYS */;
 INSERT INTO `Study_species`
-VALUES (3, 'Ardeotis', 'nigriceps'),
+VALUES (3, 'aix', 'sponsa'),
+       (3, 'Ardeotis', 'nigriceps'),
+       (4, 'Ardeotis', 'nigriceps'),
+       (5, 'axis', 'axis'),
+       (6, 'boiga', 'trigonata'),
+       (7, 'Ficus', 'religiosa'),
+       (4, 'gavialis', 'gangeticus'),
+       (5, 'Leptoptilos', 'dubius'),
+       (6, 'Panthera', 'leo'),
+       (7, 'panthera', 'pardus'),
        (1, 'Panthera', 'tigris'),
        (3, 'Panthera', 'tigris'),
+       (8, 'Panthera', 'tigris'),
        (1, 'Python', 'molurus'),
-       (2, 'Python', 'molurus');
+       (2, 'Python', 'molurus'),
+       (9, 'Python', 'molurus'),
+       (10, 'rhinoceros', 'unicornis'),
+       (1, 'rusa', 'unicolor'),
+       (1, 'Saraca', 'asoca');
 /*!40000 ALTER TABLE `Study_species`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2105,13 +2178,18 @@ CREATE TABLE `Trail`
 LOCK TABLES `Trail` WRITE;
 /*!40000 ALTER TABLE `Trail`
     DISABLE KEYS */;
-INSERT INTO `Trail`
-VALUES (2, 'Boo Hoff Trail', 10,
-        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@'),
-       (3, 'Mary\'s Rock Trail', 12,
-        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0\"@\0\0\0\0\0\0@\0\0\0\0\0\0$@\0\0\0\0\0\0@'),
-       (7, 'Bumpass Hell Trail', 11,
-        _binary '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0\0\0\0\0\0\0\0\�?\0\0\0\0\0\0\0@\0\0\0\0\0\0@\0\0\0\0\0\0 @\0\0\0\0\0\0$@\0\0\0\0\0\01@');
+insert into Trail
+values (2, 'Boo Hoff Trail', 10.04, st_geomfromtext('LINESTRING(0 0, 1 1, 2 2)'));
+insert into Trail
+values (3, 'Mary''s Rock Trail', 12.36, st_geomfromtext('LINESTRING(0 0, 1 2, 5 6, 9 7, 10 3)'));
+insert into Trail
+values (7, 'Bumpass Hell Trail', 11.19, st_geomfromtext('LINESTRING(1 0, 1 2, 5 8, 10 17)'));
+insert into Trail
+values (21, 'New World Trail', 12.29, st_geomfromtext('LINESTRING(1 0, 1 2, 5 8, 10 17)'));
+insert into Trail
+values (17, 'Old World Trail', 22.13, st_geomfromtext('LINESTRING(1 0, 1 2, 5 8, 10 17)'));
+insert into Trail
+values (16, 'Yellow Brick Road', 12.13, st_geomfromtext('LINESTRING(1 0, 1 2, 5 8, 10 17)'));
 /*!40000 ALTER TABLE `Trail`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2223,14 +2301,14 @@ LOCK TABLES `ViewPoints` WRITE;
 /*!40000 ALTER TABLE `ViewPoints`
     DISABLE KEYS */;
 INSERT INTO `ViewPoints`
-VALUES (5, 'Stony Hill Overlook'),
-       (8, 'Yosemite Falls'),
-       (10, 'Snake River Overlook'),
-       (11, 'Hurricane Ridge Visitor Center'),
-       (19, 'New World Overlook'),
-       (22, 'Old Monk Falls'),
-       (24, 'Death Lake Overlook'),
-       (25, 'Orchid Visitor Center');
+VALUES (5, 'Viewpoints'),
+       (8, 'Viewpoints'),
+       (10, 'Viewpoints'),
+       (11, 'Viewpoints'),
+       (19, 'Viewpoints'),
+       (22, 'Viewpoints'),
+       (24, 'Viewpoints'),
+       (25, 'Viewpoints');
 /*!40000 ALTER TABLE `ViewPoints`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2420,4 +2498,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-08 21:58:23
+-- Dump completed on 2020-10-08 23:08:04

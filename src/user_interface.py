@@ -27,8 +27,8 @@ class UserInterface:
             self.cancel_booking,
             self.give_service_feedback,
             self.give_feature_feedback,
-            self.nearby,
             self.update_user,
+            self.nearby
         ]
         self.curr_opt = 0
 
@@ -480,24 +480,24 @@ class UserInterface:
 
                 rows = []
                 print_header('Feature Feedback')
-                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F,' \
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name as type FROM Features F,' \
                                ' Lodging T,' \
                                ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
                                ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
                 temp = self.db.get_result(feature_list)
                 rows += temp
-                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F, Trail T,' \
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name as type FROM Features F, Trail T,' \
                                ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
                                ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
                 temp = self.db.get_result(feature_list)
                 rows += temp
-                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F,' \
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name as type FROM Features F,' \
                                ' ViewPoints T,' \
                                ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
                                ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
                 temp = self.db.get_result(feature_list)
                 rows += temp
-                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F, ' \
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name as type FROM Features F, ' \
                                'Public_Facilities T,' \
                                ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
                                ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
@@ -573,23 +573,21 @@ class UserInterface:
             return
         elif ch == 1:
             rows = []
-            trail_list = ' SELECT T.name FROM Features F, Trail T,' \
+            trail_list = ' SELECT F.feature_name FROM Features F, Trail T,' \
                          ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
                          ' and Z.belongs_to = {}'.format(f(target_np.unitcode))
             rows = self.db.get_result(trail_list)
 
             if len(rows) == 0:
-                print(
-                    "Sorry we couldn't find trails that are available,",
-                    "You will now be transferred back to the main screen")
+                print("Sorry we couldn't find trails that are available,",
+                      "You will now be transferred back to the main screen")
                 time.sleep(2.5)
                 return
 
-            print("Here's a list of trails offered by",
-                  target_np.name)
+            print("Here's a list of trails offered by", target_np.name)
             i = 0
             for row in rows:
-                print('{}. {}'.format(i + 1, row['name']))
+                print('{}. {}'.format(i + 1, row['feature_name']))
                 i += 1
 
             arg = int(input("Enter the Trail from the above options: "))
@@ -598,9 +596,10 @@ class UserInterface:
                 perror('invalid Input')
                 return
             query = " SELECT DISTINCT F.feature_id, F.feature_name" \
-                    " FROM Crosses C, Features F, Trail T " \
-                    " WHERE T.name = {} AND F.feature_id = C.feature_id " \
-                    " AND T.feature_id = C.trail_id".format(f(rows[arg - 1]['name']))
+                    " FROM Crosses C, Features F, Trail T, Features FF " \
+                    " WHERE FF.feature_name = {} AND F.feature_id = C.feature_id " \
+                    " AND T.feature_id = C.trail_id and FF.feature_id = T.feature_id".format(
+                f(rows[arg - 1]['feature_name']))
 
         elif ch == 2:
 
@@ -629,10 +628,12 @@ class UserInterface:
                     " F.geohash LIKE CONCAT((SELECT LEFT(geohash,6) " \
                     " FROM Features K WHERE K.feature_id = {}),'%')".format(rows[arg - 1]['feature_id'])
 
+        print('These are the features nearby to the current location')
+
         rows = self.db.get_result(query)
 
         if len(rows) == 0:
-            print("No data")
+            print("None's gonna save you now")
         else:
             print(tabulate(rows, headers="keys", tablefmt="fancy_grid"))
 

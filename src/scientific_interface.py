@@ -11,7 +11,7 @@ class ScientificInterface:
         'Case Study',
         'Correlational Study',
         'Experimental Study',
-        'Longitudnal Study',
+        'Longitudinal Study',
         'Clinical Trial Study'
     ]
 
