@@ -1,6 +1,7 @@
-import src.utils.syntax_check as syntax
+import datetime
 
 from ..utils.utils import *
+
 
 class Employee:
     gender_enum = [
@@ -12,6 +13,7 @@ class Employee:
     def __init__(self, db, np):
         self.np = np
         self.db = db
+        self.rows = None
         self.emp_Name = None
         self.gender = None
         self.emp_email = None
@@ -50,20 +52,45 @@ class Employee:
 
     def get_doj(self):
         self.date_of_joining = input("Enter Date Of Joining (YYYY-MM-DD): ")
-        return perror("Invalid Date") if not syntax.validate_date(self.date_of_joining) else True
+        if not syntax.validate_date(self.date_of_joining):
+            perror('Invalid Date')
+            return False
+        year, month, day = map(int, self.date_of_joining.split('-'))
+        a = datetime.datetime(year=year, month=month, day=day)
+        year, month, day = map(int, self.date_of_birth.split('-'))
+        b = datetime.datetime(year=year, month=month, day=day)
+        diff = a.year - b.year
+        if diff >= 18:
+            return True
+        perror("The Employee's age is less than 18 years")
+        return False
 
     def get_role(self):
         self.role = input("Enter Role of Employee: ").lower()
         return perror("Role cannot be empty") if syntax.empty(self.role) else True
 
-    def get_dno(self):
+    def dno_options(self):
+        self.rows = self.db.get_result(
+            "SELECT DISTINCT * from `Department` where contained_in = '{}'".format(
+                self.np.unitcode))
 
+        print("Here is the list of Departments in ", self.np.name)
+        i = 0
+        for row in self.rows:
+            print('{}. {}'.format(i + 1, row['dep_name']))
+            i += 1
+
+    def get_dno(self):
+        self.works_for_dno = int(input("Enter Department Number: "))
+        if not syntax.validate_range(self.works_for_dno, 1, len(self.rows)):
+            perror('Invalid Input')
+            return False
         return True
 
     def hire(self):
 
         print_header("Hire")
-        print("Enter new Employee's details: ")
+        print("Enter new Employee's details: \n\n ")
 
         try:
             repeat_and_error(self.get_name)()
@@ -73,28 +100,14 @@ class Employee:
             repeat_and_error(self.get_dob)()
             repeat_and_error(self.get_doj)()
             repeat_and_error(self.get_role)()
-
-            rows = self.db.get_result(
-                "SELECT DISTINCT * from `Department` where contained_in = '{}'".format(
-                    self.np.unitcode))
-
-            print("Here is the list of Departments in ", self.np.name)
-            i = 0
-            for row in rows:
-                print('{}. {}'.format(i + 1, row['dep_name']))
-                i += 1
-
-            self.works_for_dno = int(input("Enter Department Number: "))
-            if not syntax.validate_range(self.works_for_dno, 1, len(rows)):
-                perror('Invalid Input')
-                return
+            repeat_and_error(self.get_dno, self.dno_options)()
 
             query = ["INSERT INTO Employee( emp_Name, gender, emp_email, contact_number,  " \
                      "date_of_birth, date_of_joining, `role`, works_for_dno, national_park) " \
                      "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
                 self.emp_Name, self.gender, self.emp_email,
                 self.contact_number, self.date_of_birth, self.date_of_joining,
-                self.role, rows[self.works_for_dno - 1]["dep_number"], self.np.unitcode)]
+                self.role, self.rows[self.works_for_dno - 1]["dep_number"], self.np.unitcode)]
 
             return query
 
