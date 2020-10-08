@@ -27,7 +27,7 @@ After this install the external dependencies.
 We recommend the creation of a `virtual environment` 
 before this step.
 ```
-pip install < reqirements.txt
+pip install -r reqirements.txt
 ```
 Now run `main.py`
 ```
