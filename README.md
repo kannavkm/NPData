@@ -1,13 +1,13 @@
-#National Park Database
+# National Park Database #
 
-### About
+### About ###
 This is the CLI for accessing and updating 
 the National Park Database. What we tried to build
 is a model of a National Park system of a country.
 The database is using `MySQL` and the CLI is written 
 in `python3` using `PyMySQL`.
 
-### Installation
+### Installation ###
 To create a local copy of the database you may use
 use the given `database.sql` file.
 \
@@ -33,7 +33,7 @@ Now run `main.py`
 ```
 python3 main.py
 ```
-### Usage
+### Usage ###
 The CLI is divided into three broad interfaces,
 **The Admin Interface** for the National Park 
 Employees, the **User Interface** for the Users to 
@@ -42,4 +42,4 @@ Interface** that caters to the scientific community
 where you can search for species data based on different
 parameters.
 
-### Project Specific
+### Project Specific ###
