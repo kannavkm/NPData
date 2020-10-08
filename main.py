@@ -49,9 +49,12 @@ while True:
                 print("1. Admin Interface")
                 print("2. User Interface")
                 print("3. Scientific Interface")
+                print("4. Exit")
                 choice = int(input('>>> '))
-                if syntax.validate_range(choice, 1, 3):
+                if syntax.validate_range(choice, 1, 4):
                     tmp = sp.call('clear', shell=True)
+                    if choice == 4:
+                        exit()
                     dispatch(choice)
                     tmp = input("Enter any key to CONTINUE> ")
                     if tmp == 'exit':

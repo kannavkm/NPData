@@ -2,6 +2,7 @@ import time
 
 from tabulate import tabulate
 
+from src.classes.national_park import NationalPark
 from src.classes.user import User
 from src.utils.utils import *
 
@@ -17,6 +18,7 @@ class UserInterface:
             'Provide Feedback for Service',
             'Provide Feedback for a Feature',
             'Update your Profile',
+            'Find Nearby Features',
             'Exit'
         ]
         self.functions = [
@@ -25,6 +27,7 @@ class UserInterface:
             self.cancel_booking,
             self.give_service_feedback,
             self.give_feature_feedback,
+            self.nearby,
             self.update_user,
         ]
         self.curr_opt = 0
@@ -142,8 +145,7 @@ class UserInterface:
 
                 qq = "select User.username, Service_Feedback.rating, Service_Feedback.remarks, Service_Feedback.date " \
                      "from Service_Feedback inner join User on Service_Feedback.user_id = User.user_id " \
-                     "where service_id = {} order by rating".format(
-                    target_service['service_id'])
+                     "where service_id = {} order by rating".format(target_service['service_id'])
 
                 rows = self.db.get_result(qq)
 
@@ -155,7 +157,7 @@ class UserInterface:
                     break
 
         except Exception as q:
-            print(type(q))
+            perror('An error occurred in fetching')
             inp = input('Press ENTER to continue>> ')
 
     def do_a_booking(self):
@@ -416,6 +418,14 @@ class UserInterface:
                     return
                 target_service = rows[service_code - 1]
 
+                test = self.db.get_result('SELECT * FROM Service_Feedback where user_id = {} and '
+                                          'service_id = {}'.format(f(self.current_user.user_id),
+                                                                   f(target_service['service_id'])))
+                if not syntax.empty(test):
+                    print('You have already provided feedback for that service, Try Again.')
+                    inp = input('Press Enter to continue')
+                    continue
+
                 rating = int(input(
                     'Enter the rating you would like to give to {}: '.format(
                         target_service['name'])))
@@ -428,9 +438,8 @@ class UserInterface:
                 remarks = input()
 
                 qq = "INSERT INTO Service_Feedback(user_id, service_id, rating, remarks, date)" \
-                     "VALUES({},{},{},'{}',NOW())".format(
-                    self.current_user.user_id, target_service['service_id'],
-                    rating, remarks)
+                     "VALUES({},{},{},'{}',NOW())".format(self.current_user.user_id, target_service['service_id'],
+                                                          rating, remarks)
 
                 q.append(qq)
 
@@ -540,6 +549,91 @@ class UserInterface:
         except Exception as q:
             perror('An unexpected error occurred')
             imp = input('Press Enter to continue>>')
+
+    def nearby(self):
+
+        print_header("Where am I")
+
+        target_np = NationalPark(self.db)
+        target_np.get_national_park()
+
+        print_header("Where am I")
+
+        ch = int(input(
+            "Enter 1 if you are on a trail and 2 if you are at another feature: "))
+
+        print_header("Where am I")
+
+        query = ""
+        if ch != 1 and ch != 2:
+            print("Incorrect choice! Oops...")
+            return
+        elif ch == 1:
+            rows = []
+            trail_list = ' SELECT T.name FROM Features F, Trail T,' \
+                         ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                         ' and Z.belongs_to = {}'.format(f(target_np.unitcode))
+            rows = self.db.get_result(trail_list)
+
+            if len(rows) == 0:
+                print(
+                    "Sorry we couldn't find trails that are available,",
+                    "You will now be transferred back to the main screen")
+                time.sleep(2.5)
+                return
+
+            print("Here's a list of trails offered by",
+                  target_np.name)
+            i = 0
+            for row in rows:
+                print('{}. {}'.format(i + 1, row['name']))
+                i += 1
+
+            arg = int(input("Enter the Trail from the above options: "))
+
+            if not syntax.validate_range(arg, 1, len(rows)):
+                perror('invalid Input')
+                return
+            query = " SELECT DISTINCT F.feature_id, F.feature_name" \
+                    " FROM Crosses C, Features F, Trail T " \
+                    " WHERE T.name = {} AND F.feature_id = C.feature_id " \
+                    " AND T.feature_id = C.trail_id".format(f(rows[arg - 1]['name']))
+
+        elif ch == 2:
+
+            rows = []
+            feature_list = ' SELECT DISTINCT F.feature_name, F.feature_id FROM Features F, ' \
+                           ' Zone_contains Z where F.feature_id = Z.feature_id' \
+                           ' and Z.belongs_to = {}'.format(f(target_np.unitcode))
+            rows = self.db.get_result(feature_list)
+
+            if len(rows) == 0:
+                print(
+                    "Sorry we couldn't find features that are available,",
+                    "You will now be transferred back to the main screen")
+                time.sleep(2.5)
+                return
+
+            print("Here's a list of features offered by",
+                  target_np.name)
+            i = 0
+            for row in rows:
+                print('{}. {}'.format(i + 1, row['feature_name']))
+                i += 1
+
+            arg = int(input("Enter the Feature from the above options: "))
+            query = " SELECT F.feature_id, F.feature_name FROM Features F WHERE " \
+                    " F.geohash LIKE CONCAT((SELECT LEFT(geohash,6) " \
+                    " FROM Features K WHERE K.feature_id = {}),'%')".format(rows[arg - 1]['feature_id'])
+
+        rows = self.db.get_result(query)
+
+        if len(rows) == 0:
+            print("No data")
+        else:
+            print(tabulate(rows, headers="keys", tablefmt="fancy_grid"))
+
+        ans = input('\nPress ENTER to continue')
 
     def loop(self):
         print("Are you an existing user? (y/n): ")

@@ -28,7 +28,7 @@ class Species:
 
 	def get_sci_name(self):
 		self.genus, self.specific_name = input(
-			"Enter the scientific Name of the Species(genus, specific name):").split()
+			"Enter the scientific Name of the Species(genus, specific name): ").split()
 		if not syntax.empty(self.genus) and not syntax.empty(self.specific_name):
 			self.genus = self.genus.lower()
 			self.specific_name = self.specific_name.lower()
@@ -38,7 +38,7 @@ class Species:
 		return False
 
 	def get_name(self):
-		self.name = input("Enter the common name of the Species:")
+		self.name = input("Enter the common name of the Species: ")
 		if not syntax.empty(self.name):
 			self.name = self.name.lower()
 			return True
@@ -47,7 +47,7 @@ class Species:
 		return False
 
 	def get_taxon_code(self):
-		self.taxonomy_code = input("Enter the taxonomy-code of the Species:")
+		self.taxonomy_code = input("Enter the taxonomy-code of the Species: ")
 		if not syntax.empty(self.taxonomy_code):
 			return True
 		else:
@@ -55,13 +55,13 @@ class Species:
 		return False
 
 	def vulnerability_options(self):
-		print("Choose one among the vulnerability statuses of the species:")
+		print("Choose one among the vulnerability statuses of the species: ")
 		for i in range(len(self.vulnerability_enum)):
 			print('{}. {}'.format(i + 1, self.vulnerability_enum[i]))
 
 	def get_vulnerability(self):
 		self.vulnerability = int(
-			input('Enter the corresponding option for the vulnerability status of the species:'))
+			input('Enter the corresponding option for the vulnerability status of the species: '))
 		if not syntax.validate_range(self.vulnerability, 1, len(self.vulnerability_enum)):
 			perror("must be from one of the options")
 		else:
@@ -69,7 +69,7 @@ class Species:
 
 	def get_taxon_information(self):
 		self.kingdom, self._class, self.order, self.family = input(
-			'Enter the kingdom, class, order and family of the species:').split()
+			'Enter the kingdom, class, order and family of the species: ').split()
 		self.kingdom = self.kingdom.lower()
 		self._class = self._class.lower()
 		self.order = self.order.lower()
@@ -78,7 +78,7 @@ class Species:
 
 	def get_life_span(self):
 		self.average_lifespan = float(
-			input('Enter the average lifespan in years, negative if unknown:'))
+			input('Enter the average lifespan in years, negative if unknown: '))
 		if self.average_lifespan < 0:
 			self.average_lifespan = 'NULL'
 		return True
@@ -167,7 +167,7 @@ class Presence:
 		self.current_population = None
 
 	def get_nativeness(self):
-		spicyfood = input("Is the species native? True or False?")
+		spicyfood = input("Is the species native? True or False?: ")
 		if spicyfood == "True":
 			self.nativeness = True
 			return True
@@ -177,7 +177,7 @@ class Presence:
 		return False
 
 	def get_attraction(self):
-		spicyfood = input("Is the species an attraction(True or False)")
+		spicyfood = input("Is the species an attraction(True or False): ")
 		if spicyfood == "True":
 			self.is_attraction = True
 			return True
@@ -187,12 +187,12 @@ class Presence:
 		return False
 
 	def abundance_options(self):
-		print("Choose one among the abundance statuses of the species:")
+		print("Choose one among the abundance statuses of the species: ")
 		for i in range(len(self.abundance_enum)):
 			print('{}. {}'.format(i + 1, self.abundance_enum[i]))
 
 	def get_abundance(self):
-		self.abundance = to_int(input('Enter the corresponding option for the abundance status of the species:'))
+		self.abundance = to_int(input('Enter the corresponding option for the abundance status of the species: '))
 
 	def record_status_options(self):
 		print("Choose one among the record statuses of the species:")
@@ -201,21 +201,21 @@ class Presence:
 
 	def get_record_status(self):
 		self.record_status = to_int(
-			input('Enter the corresponding option for the record status of the species:'))
+			input('Enter the corresponding option for the record status of the species: '))
 
 	def get_record_date(self):
 		self.record_date = input("Enter Record Date (YYYY-MM-DD): ")
 
 	def occurrence_options(self):
-		print("Choose one among the occurrence values of the species:")
+		print("Choose one among the occurrence values of the species: ")
 		for i in range(len(self.occurrence_enum)):
 			print('{}. {}'.format(i + 1, self.occurrence_enum[i]))
 
 	def get_occurrence(self):
-		self.occurrence = to_int(input('Enter the corresponding option for the occurrence values of the species:'))
+		self.occurrence = to_int(input('Enter the corresponding option for the occurrence values of the species: '))
 
 	def get_population(self):
-		self.current_population = int(input('Enter the current population of the species in the National Park:'))
+		self.current_population = int(input('Enter the current population of the species in the National Park: '))
 
 	def add(self):
 		try:
