@@ -45,6 +45,6 @@ The data is date specific, the results might not be the
 same at the user's end as past services will not be available 
 
 ### Contributors ###
-Triansh Sharma, 2019101006
-Raj Maheshwari, 2019101039
+Triansh Sharma, 2019101006 \
+Raj Maheshwari, 2019101039 \
 Kannav Mehta, 2019101044
