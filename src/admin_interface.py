@@ -99,8 +99,8 @@ class AdminInterface:
 
         print_header('Report Species')
         print(
-            'Kindly enter the details of the species {} {} in the {},\n Press ENTER on empty string to put NULL'.format(
-                genus, spec_name, self.national_park.name))
+            'Kindly enter the details of the species {} {} in the {},\n Press ENTER on empty '
+            'string to insert NULL'.format(genus, spec_name, self.national_park.name))
 
         presence = Presence()
         presence.add()
