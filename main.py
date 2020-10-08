@@ -56,9 +56,7 @@ while True:
                     if choice == 4:
                         exit()
                     dispatch(choice)
-                    tmp = input("Enter any key to CONTINUE> ")
-                    if tmp == 'exit':
-                        break
+                    tmp = input("Enter any key to go back to select the Interface > ")
 
     except pymysql.err.OperationalError as e:
         print(e.args[0], ':', e.args[1])
