@@ -14,7 +14,7 @@ class AdminInterface:
             'Get National Park Report',
             'Modify/Add Species Data',
             'Add Employee',
-            'Add Demography',
+            'Add Census Data',
             'Service Information',
             'Features Information',
             'Exit'
@@ -79,7 +79,7 @@ class AdminInterface:
 
         if len(rows) > 0:
             ans = input("\nThat species is already recorded in {} would you like to update the status? (y/n): ".format(
-                self.national_park.unitcode))
+                self.national_park.name))
             if ans == "y":
                 presence = Presence()
                 presence.update(rows[0])
@@ -120,14 +120,20 @@ class AdminInterface:
         ans = input('\nPress ENTER to continue >> ')
 
     def add_employee(self):
-        print_header("Add Employee")
-        emp = Employee(self.db, self.national_park).hire
-        self.db.execute_query(emp())
+        try:
+            print_header("Add Employee")
+            emp = Employee(self.db, self.national_park).hire
+            self.db.execute_query(emp())
+        except Exception:
+            perror('Employee not added')
+            ans = input('\nPress ENTER to continue >> ')
+            return
+        psuccess('Successfully added the employee')
         ans = input('\nPress ENTER to continue >> ')
 
     def add_demography(self):
 
-        print_header("Update Census")
+        print_header("Add Census")
         try:
             genus, spec_name = input("Enter the scientific name of the Species (format: genus specific name): ").split()
             qq = "SELECT presence_id FROM Presence WHERE genus = '{}' AND specific_name = '{}' AND" \
@@ -153,11 +159,14 @@ class AdminInterface:
 
     def service_info_report(self):
         print_header("Service Report")
-        query = "SELECT B.service_id, C.name, sum(A.price) " \
-                "from Booking_service A, Sub_service B, Services C  " \
-                "where A.sub_service_id = B.sub_service_id and " \
-                "B.service_id = C.service_id and C.provided_by = '{}'" \
-                " GROUP BY B.service_id ORDER BY sum(A.price) DESC".format(
+        query = "SELECT B.service_id, C.name, sum(A.price) as INCOME," \
+                " count(BB.number_of_adults) as Traffic, avg(SF.rating) as Rating " \
+                " from Booking_service A, Sub_service B, Services C, Booking BB, Service_Feedback SF " \
+                " where A.sub_service_id = B.sub_service_id and " \
+                " B.service_id = C.service_id and C.provided_by = '{}'" \
+                " and A.booking_id = BB.booking_id  and C.service_id = SF.service_id " \
+                " and A.target_date >= DATE_SUB(NOW(), INTERVAL 1 YEAR) " \
+                " GROUP BY B.service_id ORDER BY sum(A.price) DESC, avg(SF.rating) DESC".format(
             self.national_park.unitcode)
         rows = self.db.get_result(query)
         if len(rows) == 0:
@@ -189,6 +198,7 @@ class AdminInterface:
         try:
             while True:
                 print_header('Admin Interface')
+                print('You are currently in {}\n\n'.format(self.national_park.name))
                 for i in range(len(self.options)):
                     print('{}. {}'.format(i + 1, self.options[i]))
                 repeat_and_error(self.choose_options)()

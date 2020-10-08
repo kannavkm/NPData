@@ -11,7 +11,7 @@ class ScientificInterface:
         'Case Study',
         'Correlational Study',
         'Experimental Study',
-        'Longitudnal Study',
+        'Longitudinal Study',
         'Clinical Trial Study'
     ]
 
@@ -41,6 +41,9 @@ class ScientificInterface:
         self.year_range = None
         self.genus = None
         self.specific_name = None
+        self.newDes = None
+        self.newLink = None
+        self.newType = None
 
     def choose_options(self):
         self.curr_opt = int(input(
@@ -88,12 +91,16 @@ class ScientificInterface:
                 " D.average_lifespan from Demography D, Presence P " \
                 " where time_stamp >= '{}-01-01'" \
                 " and time_stamp <= '{}-12-31' " \
-                " and D.presence_id = P.presence_id".format(y1, y2)
+                " and D.presence_id = P.presence_id order by time_stamp".format(y1, y2)
 
         rows = self.db.get_result(query)
-        print("\n\nHere is the demography of this period: ")
-        print(tabulate(rows, headers="keys", showindex="always",
-                       tablefmt="fancy_grid"))
+
+        if len(rows) == 0:
+            print("\nSorry, No demography found")
+        else:
+            print("\n\nHere is the demography of this period: ")
+            print(tabulate(rows, headers="keys", showindex="always",
+                           tablefmt="fancy_grid"))
 
         input("\nPress ENTER to continue >> ")
         return
@@ -110,9 +117,12 @@ class ScientificInterface:
             self.np.unitcode)
 
         rows = self.db.get_result(query)
-        print("\n\nHere's a list of studies in ", self.np.name)
-        print(tabulate(rows, headers="keys", showindex="always",
-                       tablefmt="fancy_grid"))
+        if len(rows) == 0:
+            print("\nSorry, There are no studies in this {}".format(self.np.name))
+        else:
+            print("\n\nHere's a list of studies in ", self.np.name)
+            print(tabulate(rows, headers="keys", showindex="always",
+                           tablefmt="fancy_grid"))
 
         input("\nPress ENTER to continue >> ")
         return
@@ -138,9 +148,12 @@ class ScientificInterface:
                 rows[row - 1]["name"])
 
             table_rows = self.db.get_result(query)
-            print("\n\nHere's a list of studies done by ", rows[row - 1]["name"])
-            print(tabulate(table_rows, headers="keys", showindex="always",
-                           tablefmt="fancy_grid"))
+            if len(table_rows) == 0:
+                print("\nSorry, No studies are done by this researcher")
+            else:
+                print("\n\nHere's a list of studies done by ", rows[row - 1]["name"])
+                print(tabulate(table_rows, headers="keys", showindex="always",
+                               tablefmt="fancy_grid"))
 
             input("\nPress ENTER to continue >> ")
             return
@@ -155,22 +168,25 @@ class ScientificInterface:
             self.study_type_enum[self.study_type - 1])
 
         rows = self.db.get_result(query)
-        print("\n\nHere's a list of '{}' studies done ".format(
-            self.study_type_enum[self.study_type - 1].split(' ')[0]))
-        print(tabulate(rows, headers="keys", showindex="always",
-                       tablefmt="fancy_grid"))
+        if len(rows) == 0:
+            print("\nSorry, There are no studies in this type")
+        else:
+            print("\n\nHere's a list of '{}' studies done ".format(
+                self.study_type_enum[self.study_type - 1].split(' ')[0]))
+            print(tabulate(rows, headers="keys", showindex="always",
+                           tablefmt="fancy_grid"))
         input("\nPress ENTER to continue >> ")
         return
 
     def getNationalParkofSpecies(self):
-        print_header("Species Report")
-        genus = None
-        spec_name = None
 
         while True:
+            print_header("Species Report")
+            genus = None
+            spec_name = None
+            print("** This query is a partial text search.\n The space "
+                  "between genus and specific name is necessary.\n\n")
 
-            print(
-                "** This query is a partial text search.\n The space between genus and specific name is necessary.\n\n")
             try:
                 genus, spec_name = input(
                     "Enter the scientific name of the Species (format: genus specific_name): ").split()
@@ -178,8 +194,10 @@ class ScientificInterface:
                 spec_name = spec_name.lower()
             except Exception as e:
                 perror("error")
+                inp = input("\nPress ENTER to Continue >> ")
+                continue
 
-            query = " SELECT N.name, P.genus, P.specific_name, S.name, " \
+            query = " SELECT N.name as national_park, P.genus, P.specific_name, S.name as common_name, " \
                     " P.abundance, P.occurrence FROM National_Park N, Presence P, Species S" \
                     " WHERE N.unit_code = P.national_park AND " \
                     "(P.genus, P.specific_name) = (S.genus, S.specific_name)" \
@@ -187,12 +205,29 @@ class ScientificInterface:
                 .format(genus, spec_name)
 
             rows = self.db.get_result(query)
-            print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
+
+            if len(rows) == 0:
+                print("\nSorry, No such species found")
+            else:
+                print("\nHere is the list of possible species found in each national park: ")
+                print(tabulate(rows, headers="keys", showindex="always", tablefmt="fancy_grid"))
 
             ch = input("\nDo you want to know more? (y/n): ").lower()
             if ch != 'y':
                 return
             print("\n\n")
+
+    def get_description(self):
+        self.newDes = input("Enter new Description: ")
+        return perror("Description cannot be empty") if syntax.empty(self.newDes) else True
+
+    def get_data_link(self):
+        self.newLink = input("Enter new Data Link: ")
+        return perror("Data Link cannot be empty") if syntax.empty(self.newLink) else True
+
+    def get_data_type(self):
+        self.newType = input("Enter new Data Type: ")
+        return perror("Data Type cannot be empty") if syntax.empty(self.newType) else True
 
     def updateData(self):
 
@@ -214,20 +249,25 @@ class ScientificInterface:
             row = int(input("\nChoose the serial number for data to update: "))
             if not syntax.validate_range(row, 1, len(data)):
                 perror('Invalid Input. Please choose again!')
+                input("\nPress ENTER to Continue >> ")
                 continue
 
-            newDes = input("Enter new Description: ")
-            newLink = input("Enter new Data Link: ")
-            newType = input("Enter new Data Type: ")
+            repeat_and_error(self.get_description)()
+            repeat_and_error(self.get_data_link)()
+            repeat_and_error(self.get_data_type)()
 
             ch = input("Are you sure you want to update? (y/n): ")
             if (ch != 'y'):
+                perror("No update performed")
+                inp = input("\nPress ENTER to Continue >> ")
                 return
 
             query = ["UPDATE Data SET description = '{}' , data_link = '{}', data_type = '{}'" \
-                     " where data_id = {}".format(newDes, newLink, newType, data[row - 1]["data_id"])]
+                     " where data_id = {}".format(self.newDes, self.newLink, self.newType,
+                                                  data[row - 1]["data_id"])]
 
             self.db.execute_query(query)
+            psuccess("Successfully Updated!")
             input("\nPress ENTER to Continue >> ")
             return
 

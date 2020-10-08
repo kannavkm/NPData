@@ -13,15 +13,13 @@ use the given `database.sql` file.
 \
 To connect to your database you will need
  to store the config of your database in a 
-`config.py` file. Place this file in a directory
-named `local`  
+`config.py` file. 
 Here's a sample `config.py`:
 ```
 username = 'aaaaa' # Enter the username of user of the database
 password = 'aaaaa' # password of the mysql server user
 port = 5005 # port on which server is running
 db = 'aaaaa' # database name
-
 ```
 After this install the external dependencies.
 We recommend the creation of a `virtual environment` 

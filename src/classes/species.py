@@ -167,7 +167,7 @@ class Presence:
 		self.current_population = None
 
 	def get_nativeness(self):
-		spicyfood = input("Is the species native? True or False?: ")
+		spicyfood = input("Is the species native?(True or False): ")
 		if spicyfood == "True":
 			self.nativeness = True
 			return True
@@ -177,7 +177,7 @@ class Presence:
 		return False
 
 	def get_attraction(self):
-		spicyfood = input("Is the species an attraction(True or False): ")
+		spicyfood = input("Is the species an attraction?(True or False): ")
 		if spicyfood == "True":
 			self.is_attraction = True
 			return True
@@ -215,7 +215,7 @@ class Presence:
 		self.occurrence = to_int(input('Enter the corresponding option for the occurrence values of the species: '))
 
 	def get_population(self):
-		self.current_population = int(input('Enter the current population of the species in the National Park: '))
+		self.current_population = to_int(input('Enter the current population of the species in the National Park: '))
 
 	def add(self):
 		try:
@@ -285,10 +285,10 @@ class Demography:
 			self.census_date = None
 
 	def get_population(self):
-		self.total_population = int(input('Enter the current population of the species in the National Park:'))
+		self.total_population = to_int(input('Enter the current population of the species in the National Park: '))
 
 	def get_avg_lifespan(self):
-		self.average_lifespan = float(input('Enter the recorded average lifespan in the census'))
+		self.average_lifespan = float(input('Enter the recorded average lifespan in the census: '))
 
 	def add(self):
 		try:

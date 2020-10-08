@@ -50,7 +50,9 @@ while True:
                 print("2. User Interface")
                 print("3. Scientific Interface")
                 print("4. Exit")
-                choice = int(input('>>> '))
+                choice = to_int(input('>>> '))
+                if choice is None:
+                    continue
                 if syntax.validate_range(choice, 1, 4):
                     tmp = sp.call('clear', shell=True)
                     if choice == 4:

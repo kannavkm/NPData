@@ -46,6 +46,13 @@ def to_int(x):
         return int(x)
 
 
+def always_int(x):
+    if syntax.empty(x):
+        return 1
+    else:
+        return int(x)
+
+
 def f(x):
     if x is None:
         return 'NULL'
@@ -59,13 +66,11 @@ def repeat_and_error(func, func2=None):
     def inner():
         if func2 is not None:
             func2()
-        for _ in range(3):
+        while True:
             try:
                 if func():
                     break
             except ValueError as e:
                 perror('Input is either null or does not match the type expected')
-            if _ == 2:
-                raise ValueError('Insertion Failed, too many wrong attempts')
 
     return inner
