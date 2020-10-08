@@ -351,7 +351,7 @@ class UserInterface:
                 psuccess(
                     'The Cancellation was a success. The amount will be returned in a few days')
 
-                rows  = self.db.get_result("SELECT * FROM Booking_service where booking_id = {}".format(del_booking_id))
+                rows = self.db.get_result("SELECT * FROM Booking_service where booking_id = {}".format(del_booking_id))
 
                 if len(rows) == 0:
                     qq = "DELETE FROM Booking" \
@@ -448,74 +448,98 @@ class UserInterface:
             time.sleep(5)
 
     def give_feature_feedback(self):
-        pass
-        # try:
-        #     q = []
-        #     while True:
-        #         print_header('Feature Feedback')
-        #         national_list = "SELECT unit_code, name from National_Park"
-        #         rows = self.db.get_result(national_list)
-        #         print('Here are the National Parks')
-        #         i = 0
-        #         for row in rows:
-        #             print('{}. {}'.format(i + 1, row['name']))
-        #             i += 1
-        #         unit_code = int(
-        #             input('Enter the corresponding number of the National Park you want to provide feedback for:'))
-        #         if not syntax.validate_range(unit_code, 1, len(rows)):
-        #             perror('invalid Input')
-        #             return
-        #         target_np = rows[unit_code - 1]
-        #
-        #         print_header('Feature Feedback')
-        #         feature_list = "SELECT F.feature_name,
-        #         rows = self.db.get_result(service_list)
-        #         if len(rows) == 0:
-        #             print("Sorry we couldn't find features that are available,",
-        #                   "You will now be transferred back to the main screen")
-        #             time.sleep(2.5)
-        #             continue
-        #
-        #         print("Here's a list of features in", target_np['name'])
-        #         i = 0
-        #         for row in rows:
-        #             print('{}. {}: \n {}'.format(i + 1, row['name'], row['description']))
-        #             i += 1
-        #
-        #         service_code = int(
-        #             input('Enter the corresponding number of the service you want to provide feedback for:'))
-        #         if not syntax.validate_range(service_code, 1, len(rows)):
-        #             perror('invalid Input')
-        #             return
-        #         target_service = rows[service_code - 1]
-        #
-        #         rating = int(input('Enter the rating you would like to give to {}'.format(target_service['name'])))
-        #
-        #         if not syntax.validate_range(rating, 1, 5):
-        #             perror('invalid Input')
-        #             return
-        #
-        #         print("Enter your remarks if any")
-        #         remarks = input()
-        #
-        #         qq = "INSERT INTO Service_Feedback(user_id, service_id, rating, remarks, date)" \
-        #              "VALUES({},{},{},'{}',NOW())".format(self.current_user.user_id, target_service['service_id'],
-        #                                                   rating, remarks)
-        #
-        #         q.append(qq)
-        #
-        #         print('Do you want to continue give feedback(y/n)')
-        #         ans = input()
-        #         if ans.lower() != 'y':
-        #             break
-        #
-        #     self.db.execute_query(q)
-        #     psuccess("Congratulations your feedback was recorded")
-        #     time.sleep(2.5)
-        #
-        # except Exception as q:
-        #     print(type(q))
-        #     time.sleep(5)
+        try:
+            q = []
+            while True:
+                print_header('Feature Feedback')
+                national_list = "SELECT unit_code, name from National_Park"
+                rows = self.db.get_result(national_list)
+                print('Here are the National Parks')
+                i = 0
+                for row in rows:
+                    print('{}. {}'.format(i + 1, row['name']))
+                    i += 1
+                unit_code = int(
+                    input('Enter the corresponding number of the National Park you want to provide feedback for: '))
+                if not syntax.validate_range(unit_code, 1, len(rows)):
+                    perror('invalid Input')
+                    return
+                target_np = rows[unit_code - 1]
+
+                rows = []
+                print_header('Feature Feedback')
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F,' \
+                               ' Lodging T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F, Trail T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F,' \
+                               ' ViewPoints T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F, ' \
+                               'Public_Facilities T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                if len(rows) == 0:
+                    print("Sorry we couldn't find features that are available,",
+                          "You will now be transferred back to the main screen")
+                    imp = input('Press Enter to continue>>')
+                    continue
+
+                print(tabulate(rows, headers='keys', showindex='always'))
+                feature_code = int(
+                    input('Enter the corresponding number of the feature you want to provide feedback for: '))
+                if not syntax.validate_range(feature_code, 0, len(rows) - 1):
+                    perror('invalid Input')
+                    return
+                target_feature = rows[feature_code]
+
+                test = self.db.get_result('SELECT * FROM Feature_Feedback where user_id = {} and '
+                                          'feature_id = {}'.format(f(self.current_user.user_id),
+                                                                   f(target_feature['feature_id'])))
+                if not syntax.empty(test):
+                    print('You have already provided feedback for that feature, Try Again.')
+                    inp = input('Press Enter to continue')
+                    continue
+
+                rating = int(input('Enter the rating you would like to give to {}: '.format(target_feature['name'])))
+
+                if not syntax.validate_range(rating, 1, 5):
+                    perror('invalid Input')
+                    return
+
+                print("Enter your remarks if any")
+                remarks = input()
+
+                qq = "INSERT INTO Feature_Feedback(user_id, feature_id, rating, remarks, date)" \
+                     "VALUES({},{},{},'{}',NOW())".format(self.current_user.user_id, target_feature['feature_id'],
+                                                          rating, remarks)
+
+                q.append(qq)
+
+                print('Do you want to continue give feedback(y/n)')
+                ans = input()
+                if ans.lower() != 'y':
+                    break
+
+            self.db.execute_query(q)
+            psuccess("Congratulations your feedback was recorded")
+            imp = input('Press Enter to continue>>')
+
+        except Exception as q:
+            perror('An unexpected error occurred')
+            imp = input('Press Enter to continue>>')
 
     def loop(self):
         print("Are you an existing user? (y/n): ")

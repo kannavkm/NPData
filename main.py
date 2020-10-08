@@ -9,15 +9,12 @@ from src.utils.utils import *
 
 def dispatch(option):
     if option == 1:
-        f = Figlet(font='slant')
         AI = src.admin_interface.AdminInterface(np)
         AI.loop()
     elif option == 2:
-        f = Figlet(font='slant')
         UI = src.user_interface.UserInterface(np)
         UI.loop()
     elif option == 3:
-        f = Figlet(font='slant')
         SI = src.scientific_interface.ScientificInterface(np)
         SI.loop()
     else:

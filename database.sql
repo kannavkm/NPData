@@ -82,10 +82,6 @@ CREATE TABLE `Booking_service`
 LOCK TABLES `Booking_service` WRITE;
 /*!40000 ALTER TABLE `Booking_service`
     DISABLE KEYS */;
-INSERT INTO `Booking_service`
-VALUES (1, 1, 1200, '2020-10-05'),
-       (1, 2, 1000, '2020-10-06'),
-       (22, 2, 1000, '2020-10-04');
 /*!40000 ALTER TABLE `Booking_service`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -117,12 +113,17 @@ LOCK TABLES `Class_classification` WRITE;
 /*!40000 ALTER TABLE `Class_classification`
     DISABLE KEYS */;
 INSERT INTO `Class_classification`
-VALUES ('a', 'a'),
+VALUES ('Aves', 'Accipitriformes'),
+       ('Aves', 'Anseriformes'),
        ('Aves', 'Ciconiiformes'),
        ('Aves', 'Otidiformes'),
+       ('Mammalia', 'Artiodactyla'),
        ('Mammalia', 'Carnivora'),
+       ('Mammalia', 'Chiroptera'),
+       ('Mammalia', 'Felidae'),
        ('mammalia', 'perissodactyla'),
        ('Mammalia', 'Proboscidea'),
+       ('Mammalia', 'Rodentia'),
        ('Reptilia', 'Squamata'),
        ('rosids', 'Fabales'),
        ('rosids', 'Rosales');
@@ -363,8 +364,7 @@ LOCK TABLES `Family_classification` WRITE;
 /*!40000 ALTER TABLE `Family_classification`
     DISABLE KEYS */;
 INSERT INTO `Family_classification`
-VALUES ('a', 'a'),
-       ('Ciconiidae', 'Leptoptilos'),
+VALUES ('Ciconiidae', 'Leptoptilos'),
        ('Elephantidae', 'Elephas'),
        ('Fabaceae', 'Saraca'),
        ('felidae', 'Neofelis'),
@@ -373,7 +373,7 @@ VALUES ('a', 'a'),
        ('Otididae', 'Ardeotis'),
        ('Pythonidae', 'Malayopython'),
        ('Pythonidae', 'Python'),
-       ('rhinoderotidae', 'rhinoceros');
+       ('rhinocerotidae', 'rhinoceros');
 /*!40000 ALTER TABLE `Family_classification`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -417,6 +417,7 @@ VALUES (1, 1, 4, 'Very good', '2018-01-30 00:00:00'),
        (3, 6, 4, 'niiceee', '2018-01-11 00:00:00'),
        (4, 4, 3, 'Very very nice', '2012-08-14 00:00:00'),
        (6, 11, 4, 'superb', '2018-05-30 00:00:00'),
+       (6, 15, 4, 'Nice! but small rooms.', '2020-10-08 09:22:16'),
        (8, 13, 5, 'loved it', '2018-06-12 00:00:00');
 /*!40000 ALTER TABLE `Feature_Feedback`
     ENABLE KEYS */;
@@ -572,8 +573,7 @@ LOCK TABLES `Kingdom_classification` WRITE;
 /*!40000 ALTER TABLE `Kingdom_classification`
     DISABLE KEYS */;
 INSERT INTO `Kingdom_classification`
-VALUES ('a', 'a'),
-       ('Plantae', 'Angiosperms'),
+VALUES ('Plantae', 'Angiosperms'),
        ('Animalia', 'Aves'),
        ('Animalia', 'Mammalia'),
        ('Animalia', 'Reptilia'),
@@ -689,14 +689,11 @@ LOCK TABLES `Order_classification` WRITE;
 /*!40000 ALTER TABLE `Order_classification`
     DISABLE KEYS */;
 INSERT INTO `Order_classification`
-VALUES ('a', 'a'),
-       ('carnivora', 'felidae'),
+VALUES ('carnivora', 'felidae'),
        ('ciconiiformes', 'Ciconiidae'),
        ('Fabales', 'Fabaceae'),
        ('Otidiformes', 'Otididae'),
-       ('perissodactyla', 'rhicocerotidae'),
        ('perissodactyla', 'rhinocerotidae'),
-       ('perissodactyla', 'rhinoderotidae'),
        ('Proboscidea', 'Elephantidae'),
        ('Rosales', 'Moraceae'),
        ('Squamata', 'Pythonidae');
@@ -790,7 +787,7 @@ VALUES (1, 'Panthera', 'tigris', 'CRBT', 1, 1, 'uncommon', 'Verified', '2010-06-
        (5, 'Python', 'molurus', 'KLDO', 1, 0, 'uncommon', 'Non Verified', '2015-08-20', 'Seasonal', 44),
        (6, 'Ardeotis', 'nigriceps', 'KLDO', 1, 1, 'rare', 'Non Verified', '2010-10-10', 'Seasonal', 56),
        (7, 'Python', 'molurus', 'KNHA', 1, 0, 'uncommon', 'Verified', '2018-11-15', 'Full Year', 232),
-       (9, 'rhinoceros', 'unicornis', 'CRBT', 1, 1, 'rare', 'Verified', '2020-01-01', 'Full Year', NULL);
+       (9, 'rhinoceros', 'unicornis', 'CRBT', 1, 1, 'rare', 'Non Verified', '2020-01-01', 'Full Year', 100);
 /*!40000 ALTER TABLE `Presence`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1024,9 +1021,6 @@ CREATE TABLE `Service_Feedback`
 LOCK TABLES `Service_Feedback` WRITE;
 /*!40000 ALTER TABLE `Service_Feedback`
     DISABLE KEYS */;
-INSERT INTO `Service_Feedback`
-VALUES (6, 1, 5, 'great! Try next time plz.', '2020-10-04 12:34:34'),
-       (6, 2, 3, 'No good, water', '2020-10-04 12:34:34');
 /*!40000 ALTER TABLE `Service_Feedback`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1048,7 +1042,7 @@ CREATE TABLE `Services`
     KEY `provided_by` (`provided_by`),
     CONSTRAINT `Services_ibfk_1` FOREIGN KEY (`provided_by`) REFERENCES `National_Park` (`unit_code`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
+  AUTO_INCREMENT = 19
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1061,10 +1055,24 @@ LOCK TABLES `Services` WRITE;
 /*!40000 ALTER TABLE `Services`
     DISABLE KEYS */;
 INSERT INTO `Services`
-VALUES (1, 'Safari', 'this is first safari', 'CRBT'),
-       (2, 'Safari 2', 'This is the second safari', 'CRBT'),
-       (3, 'trekking', 'This is first trekking', 'KNHA'),
-       (4, 'sight seeing tour', 'This the first sightseeing', 'KZRG');
+VALUES (1, 'Canter Safari', 'Nice wildlife tour with a bunch of people', 'KLDO'),
+       (2, 'Jeep Safari', 'Family wildlife tour', 'KLDO'),
+       (3, 'Night Trekking', 'See how the forest looks in night', 'MNAS'),
+       (4, 'Forest Hiking', 'Lets explore deep jungle', 'KNHA'),
+       (5, 'Long Day Trekking', 'How fun would it be to see wildlife that close', 'CRBT'),
+       (6, 'Jeep Safari', 'Family wildlife tour', 'KNHA'),
+       (7, 'Jeep Safari', 'Family wildlife tour', 'CRBT'),
+       (8, 'River Rafting', 'Enjoy rafting in the river', 'MNAS'),
+       (9, 'Canter Safari', 'Nice wildlife tour with a bunch of people', 'KZRG'),
+       (10, 'Canoeing', 'A good recreational activity', 'CRBT'),
+       (11, 'Boating', 'Enjoy the views from a lake', 'KNHA'),
+       (12, 'River Rafting', 'Enjoy rafting in the river', 'KZRG'),
+       (13, 'Explore Museums', 'Lot to know about history', 'KZRG'),
+       (14, 'Explore Museums', 'Lot to know about history', 'KNHA'),
+       (15, 'Visit forts', 'a tour to historical monuments', 'KLDO'),
+       (16, 'Bird Watching', 'Know more about various species of birds', 'KLDO'),
+       (17, 'Bird Watching', 'Know more about various species of birds', 'MNAS'),
+       (18, 'Visiting gardens', 'A tour to botanical and flower gardens', 'CRBT');
 /*!40000 ALTER TABLE `Services`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1078,11 +1086,11 @@ DROP TABLE IF EXISTS `Species`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Species`
 (
-    `genus`            varchar(255)                                                                                                             NOT NULL,
-    `specific_name`    varchar(255)                                                                                                             NOT NULL,
-    `taxonomy_code`    varchar(10)                                                                                                              NOT NULL,
-    `name`             varchar(255)                                                                                                             NOT NULL,
-    `vulnerability`    enum ('Extinct','Extinct from wild','Critically Endangered','Endangered','Vulnerable','Near Threatened','Least Concern') NOT NULL,
+    `genus`            varchar(255)                                                                                                                              NOT NULL,
+    `specific_name`    varchar(255)                                                                                                                              NOT NULL,
+    `taxonomy_code`    varchar(10)                                                                                                                               NOT NULL,
+    `name`             varchar(255)                                                                                                                              NOT NULL,
+    `vulnerability`    enum ('Extinct','Extinct from wild','Critically Endangered','Endangered','Vulnerable','Near Threatened','Least Concern','Data Deficient') NOT NULL,
     `average_lifespan` decimal(10, 0) DEFAULT NULL,
     PRIMARY KEY (`genus`, `specific_name`),
     UNIQUE KEY `taxonomy_code` (`taxonomy_code`),
@@ -1309,7 +1317,7 @@ CREATE TABLE `Sub_service`
     KEY `service_id` (`service_id`),
     CONSTRAINT `Sub_service_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `Services` (`service_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
+  AUTO_INCREMENT = 33
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1322,10 +1330,38 @@ LOCK TABLES `Sub_service` WRITE;
 /*!40000 ALTER TABLE `Sub_service`
     DISABLE KEYS */;
 INSERT INTO `Sub_service`
-VALUES (1, 1, '10:00:00'),
+VALUES (1, 1, '06:00:00'),
        (2, 1, '16:00:00'),
-       (3, 2, '20:00:00'),
-       (4, 4, NULL);
+       (3, 2, '06:00:00'),
+       (4, 2, '16:00:00'),
+       (5, 3, '19:00:00'),
+       (6, 3, '19:30:00'),
+       (7, 3, '20:00:00'),
+       (8, 4, '13:30:00'),
+       (9, 4, '14:30:00'),
+       (10, 4, '10:00:00'),
+       (11, 5, '09:00:00'),
+       (12, 6, '07:00:00'),
+       (13, 6, '16:00:00'),
+       (14, 7, '07:00:00'),
+       (15, 7, '17:00:00'),
+       (16, 8, '13:00:00'),
+       (17, 8, '14:00:00'),
+       (18, 9, '07:00:00'),
+       (19, 9, '16:00:00'),
+       (20, 10, '16:00:00'),
+       (21, 11, '16:00:00'),
+       (22, 12, '15:00:00'),
+       (23, 13, '10:00:00'),
+       (24, 13, '14:00:00'),
+       (25, 14, '10:00:00'),
+       (26, 14, '14:00:00'),
+       (27, 15, '09:00:00'),
+       (28, 16, '06:30:00'),
+       (29, 17, '06:30:00'),
+       (30, 18, '10:30:00'),
+       (31, 18, '12:30:00'),
+       (32, 18, '15:00:00');
 /*!40000 ALTER TABLE `Sub_service`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1359,22 +1395,102 @@ LOCK TABLES `Sub_service_timings` WRITE;
 /*!40000 ALTER TABLE `Sub_service_timings`
     DISABLE KEYS */;
 INSERT INTO `Sub_service_timings`
-VALUES (1, 40, 40, '2020-10-04', 1000.00),
-       (1, 40, 44, '2020-10-05', 1200.00),
-       (1, 39, 40, '2020-10-06', 1000.00),
-       (1, 40, 40, '2020-10-07', 1000.00),
-       (1, 40, 40, '2020-10-08', 1000.00),
-       (1, 40, 44, '2020-10-09', 1200.00),
-       (1, 40, 40, '2020-10-10', 1000.00),
-       (1, 40, 40, '2020-10-11', 1000.00),
-       (2, 11, 12, '2020-10-04', 1000.00),
-       (2, 12, 12, '2020-10-05', 1200.00),
-       (2, 11, 12, '2020-10-06', 1000.00),
-       (2, 12, 12, '2020-10-07', 1000.00),
-       (2, 12, 12, '2020-10-08', 1000.00),
-       (2, 12, 12, '2020-10-09', 1200.00),
-       (2, 12, 12, '2020-10-10', 1000.00),
-       (2, 40, 40, '2020-10-11', 1000.00);
+VALUES (1, 15, 24, '2020-11-10', 1700.00),
+       (1, 5, 12, '2020-11-11', 1100.00),
+       (1, 15, 24, '2020-11-12', 1700.00),
+       (2, 16, 19, '2020-11-10', 1700.00),
+       (2, 15, 15, '2020-11-11', 900.00),
+       (2, 5, 12, '2020-11-12', 1100.00),
+       (3, 7, 9, '2020-11-10', 2700.00),
+       (3, 1, 5, '2020-11-11', 900.00),
+       (3, 16, 19, '2020-11-12', 1700.00),
+       (4, 2, 3, '2020-11-10', 2600.00),
+       (4, 7, 16, '2020-11-11', 1100.00),
+       (4, 15, 15, '2020-11-12', 900.00),
+       (5, 6, 7, '2020-11-10', 200.00),
+       (5, 0, 7, '2020-11-11', 2600.00),
+       (5, 7, 9, '2020-11-12', 2700.00),
+       (6, 18, 25, '2020-11-10', 2600.00),
+       (6, 11, 15, '2020-11-11', 2800.00),
+       (6, 1, 5, '2020-11-12', 900.00),
+       (7, 11, 12, '2020-11-10', 1700.00),
+       (7, 17, 24, '2020-11-11', 1500.00),
+       (7, 2, 3, '2020-11-12', 2600.00),
+       (8, 14, 16, '2020-11-10', 2000.00),
+       (8, 12, 12, '2020-11-11', 2800.00),
+       (8, 7, 16, '2020-11-12', 1100.00),
+       (9, 16, 23, '2020-11-10', 700.00),
+       (9, 15, 18, '2020-11-11', 100.00),
+       (9, 6, 7, '2020-11-12', 200.00),
+       (10, 18, 25, '2020-11-10', 700.00),
+       (10, 9, 10, '2020-11-11', 2600.00),
+       (10, 0, 7, '2020-11-12', 2600.00),
+       (11, 6, 14, '2020-11-10', 1200.00),
+       (11, 11, 13, '2020-11-11', 100.00),
+       (11, 18, 25, '2020-11-12', 2600.00),
+       (12, 0, 1, '2020-11-10', 1100.00),
+       (12, 1, 5, '2020-11-11', 700.00),
+       (12, 11, 15, '2020-11-12', 2800.00),
+       (13, 5, 8, '2020-11-10', 800.00),
+       (13, 9, 14, '2020-11-11', 1600.00),
+       (13, 11, 12, '2020-11-12', 1700.00),
+       (14, 0, 1, '2020-11-10', 200.00),
+       (14, 10, 14, '2020-11-11', 1000.00),
+       (14, 17, 24, '2020-11-12', 1500.00),
+       (15, 8, 9, '2020-11-10', 1100.00),
+       (15, 11, 19, '2020-11-11', 1400.00),
+       (15, 14, 16, '2020-11-12', 2000.00),
+       (16, 13, 13, '2020-11-10', 2200.00),
+       (16, 10, 15, '2020-11-11', 2300.00),
+       (16, 12, 12, '2020-11-12', 2800.00),
+       (17, 14, 17, '2020-11-10', 1100.00),
+       (17, 19, 26, '2020-11-11', 2800.00),
+       (17, 16, 23, '2020-11-12', 700.00),
+       (18, 9, 16, '2020-11-10', 1800.00),
+       (18, 11, 17, '2020-11-11', 2000.00),
+       (18, 15, 18, '2020-11-12', 100.00),
+       (19, 6, 8, '2020-11-10', 2400.00),
+       (19, 14, 17, '2020-11-11', 1400.00),
+       (19, 18, 25, '2020-11-12', 700.00),
+       (20, 19, 26, '2020-11-10', 2800.00),
+       (20, 18, 20, '2020-11-11', 1500.00),
+       (20, 9, 10, '2020-11-12', 2600.00),
+       (21, 17, 26, '2020-11-10', 2900.00),
+       (21, 5, 8, '2020-11-11', 1900.00),
+       (21, 6, 14, '2020-11-12', 1200.00),
+       (22, 5, 6, '2020-11-10', 1500.00),
+       (22, 15, 19, '2020-11-11', 1500.00),
+       (22, 11, 13, '2020-11-12', 100.00),
+       (23, 8, 8, '2020-11-10', 2000.00),
+       (23, 18, 26, '2020-11-11', 1300.00),
+       (23, 0, 1, '2020-11-12', 1100.00),
+       (24, 7, 15, '2020-11-10', 600.00),
+       (24, 0, 8, '2020-11-11', 1100.00),
+       (24, 1, 5, '2020-11-12', 700.00),
+       (25, 6, 9, '2020-11-10', 500.00),
+       (25, 19, 24, '2020-11-11', 2900.00),
+       (25, 5, 8, '2020-11-12', 800.00),
+       (26, 7, 12, '2020-11-10', 1700.00),
+       (26, 0, 7, '2020-11-11', 300.00),
+       (26, 9, 14, '2020-11-12', 1600.00),
+       (27, 17, 22, '2020-11-10', 2200.00),
+       (27, 16, 17, '2020-11-11', 200.00),
+       (27, 0, 1, '2020-11-12', 200.00),
+       (28, 11, 19, '2020-11-10', 100.00),
+       (28, 13, 15, '2020-11-11', 1400.00),
+       (28, 10, 14, '2020-11-12', 1000.00),
+       (29, 8, 10, '2020-11-10', 2700.00),
+       (29, 11, 13, '2020-11-11', 100.00),
+       (29, 8, 9, '2020-11-12', 1100.00),
+       (30, 16, 24, '2020-11-10', 200.00),
+       (30, 2, 8, '2020-11-11', 700.00),
+       (30, 11, 19, '2020-11-12', 1400.00),
+       (31, 15, 22, '2020-11-10', 1800.00),
+       (31, 0, 7, '2020-11-11', 900.00),
+       (31, 13, 13, '2020-11-12', 2200.00),
+       (32, 15, 21, '2020-11-10', 200.00),
+       (32, 7, 11, '2020-11-11', 1600.00),
+       (32, 19, 20, '2020-11-12', 2000.00);
 /*!40000 ALTER TABLE `Sub_service_timings`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1723,4 +1839,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-06 16:56:16
+-- Dump completed on 2020-10-08 14:53:18
