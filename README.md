@@ -2,14 +2,14 @@
 
 ### About ###
 This is the CLI for accessing and updating 
-the National Park Database. What we tried to build
-is a model of a National Park system of a country.
-The database is using `MySQL` and the CLI is written 
+the National Park Database. We built
+a model of the National Park System of a country.
+The database used is `MySQL` and the CLI is written 
 in `python3` using `PyMySQL`.
 
 ### Installation ###
-To create a local copy of the database you may use
-use the given `database.sql` file.
+To create a local copy of the database you can use
+the given `database.sql` file.
 \
 To connect to your database you will need
  to store the config of your database in a 
@@ -18,14 +18,14 @@ Here's a sample `config.py`:
 ```
 username = 'aaaaa' # Enter the username of user of the database
 password = 'aaaaa' # password of the mysql server user
-port = 5005 # port on which server is running
+port = 5005 # port of the host on which server is running
 db = 'aaaaa' # database name
 ```
 After this install the external dependencies.
 We recommend the creation of a `virtual environment` 
 before this step.
 ```
-pip install -r reqirements.txt
+pip install -r requirements.txt
 ```
 Now run `main.py`
 ```
@@ -41,3 +41,10 @@ where you can search for species data based on different
 parameters.
 
 ### Project Specific ###
+The data is date specific, the results might not be the
+same at the user's end as past services will not be available 
+
+### Contributors ###
+Triansh Sharma, 2019101006
+Raj Maheshwari, 2019101039
+Kannav Mehta, 2019101044
