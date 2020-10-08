@@ -1,7 +1,7 @@
 import pymysql.cursors
 
 from local import config
-from src.utils.utils import perror, psuccess
+from src.utils.utils import psuccess
 
 
 class Database:
@@ -26,12 +26,12 @@ class Database:
 
     def execute_query(self, query):
         for qr in query:
-            try:
-                self.cur.execute(qr)
-                self.con.commit()
-                psuccess("Success")
-            except Exception as e:
-                self.con.rollback()
-                perror("Failed to execute the operation", e)
-                return False
+            # try:
+            self.cur.execute(qr)
+            self.con.commit()
+            psuccess("Success")
+        # except Exception as e:
+        #     self.con.rollback()
+        #     perror("Failed to execute the operation")
+        #     return False
         return True

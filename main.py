@@ -9,15 +9,12 @@ from src.utils.utils import *
 
 def dispatch(option):
     if option == 1:
-        f = Figlet(font='slant')
         AI = src.admin_interface.AdminInterface(np)
         AI.loop()
     elif option == 2:
-        f = Figlet(font='slant')
         UI = src.user_interface.UserInterface(np)
         UI.loop()
     elif option == 3:
-        f = Figlet(font='slant')
         SI = src.scientific_interface.ScientificInterface(np)
         SI.loop()
     else:
@@ -52,9 +49,12 @@ while True:
                 print("1. Admin Interface")
                 print("2. User Interface")
                 print("3. Scientific Interface")
+                print("4. Exit")
                 choice = int(input('>>> '))
-                if syntax.validate_range(choice, 1, 3):
+                if syntax.validate_range(choice, 1, 4):
                     tmp = sp.call('clear', shell=True)
+                    if choice == 4:
+                        exit()
                     dispatch(choice)
                     tmp = input("Enter any key to CONTINUE> ")
                     if tmp == 'exit':

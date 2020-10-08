@@ -45,11 +45,11 @@ class User:
             query = "INSERT INTO User( username, email, password,contact_number, date_of_birth)" \
                     "VALUES ( '{}', '{}', '{}','{}','{}')".format(self.username, self.email, self.password,
                                                                   self.contact_number, self.dob)
-            print(query)
+            # print(query)
             return query
 
-        except ValueError as e:
-            print(e.args[0])
+        except Exception as e:
+            print("error")
 
     def login(self):
         try:

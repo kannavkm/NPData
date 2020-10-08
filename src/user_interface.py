@@ -2,6 +2,7 @@ import time
 
 from tabulate import tabulate
 
+from src.classes.national_park import NationalPark
 from src.classes.user import User
 from src.utils.utils import *
 
@@ -17,6 +18,7 @@ class UserInterface:
             'Provide Feedback for Service',
             'Provide Feedback for a Feature',
             'Update your Profile',
+            'Find Nearby Features',
             'Exit'
         ]
         self.functions = [
@@ -25,6 +27,7 @@ class UserInterface:
             self.cancel_booking,
             self.give_service_feedback,
             self.give_feature_feedback,
+            self.nearby,
             self.update_user,
         ]
         self.curr_opt = 0
@@ -34,23 +37,29 @@ class UserInterface:
             self.current_user = User()
             query = self.current_user.create()
             self.db.execute_query([query])
+            return True
 
         except Exception as e:
             perror('An error occurred')
             inp = input('Press Enter to continue >> ')
 
     def update_user(self):
+        print_header("Update Profile")
         newUser = User()
         repeat_and_error(newUser.get_name)()
         repeat_and_error(newUser.get_password)()
         repeat_and_error(newUser.get_contact)()
 
         query = ["UPDATE User SET username = '{}' , password = '{}' , " \
-                 "contact_number = '{}' where user_id = {}".format(newUser.username, newUser.password,
-                                                                   newUser.contact_number, self.current_user.user_id)]
+                 "contact_number = '{}' where user_id = {}".format(
+            newUser.username, newUser.password,
+            newUser.contact_number, self.current_user.user_id)]
 
         res = self.db.execute_query(query)
-        self.current_user = newUser
+        if res:
+            self.current_user.username = newUser.username
+            self.current_user.password = newUser.password
+            self.current_user.contact_number = newUser.contact_number
         inp = input('\nPress ENTER to continue >> ')
 
     def login_user(self):
@@ -72,7 +81,8 @@ class UserInterface:
             return False
 
     def choose_options(self):
-        self.curr_opt = int(input('Enter the corresponding option for which activity you want to perform: '))
+        self.curr_opt = int(input(
+            'Enter the corresponding option for which activity you want to perform: '))
         if not syntax.validate_range(self.curr_opt, 1, len(self.options)):
             perror("must be from one of the options")
             return False
@@ -90,7 +100,8 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
-                unit_code = int(input('Enter the corresponding number of the National Park you want to Discover: '))
+                unit_code = int(input(
+                    'Enter the corresponding number of the National Park you want to Discover: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -101,24 +112,28 @@ class UserInterface:
                     target_np['unit_code'])
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
-                    print("Sorry No services are available in that National,",
-                          " Kindly wait while we send you back to main screen")
+                    print(
+                        "Sorry No services are available in this National Park,",
+                        " Kindly wait while we send you back to main screen")
                     time.sleep(5)
                     continue
                 print("Here's a list of services in", target_np['name'])
                 i = 0
                 for row in rows:
-                    print('{}. {}: \nAbout : {}'.format(i + 1, row['name'], row['description']))
+                    print('{}. {}: \nAbout : {}'.format(i + 1, row['name'],
+                                                        row['description']))
                     i += 1
-                service_code = int(input('Enter the corresponding number of the service you want to read about: '))
+                service_code = int(input(
+                    'Enter the corresponding number of the service you want to read about: '))
                 if not syntax.validate_range(service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
                 target_service = rows[service_code - 1]
 
                 print_header('Discover')
-                print("Name: " + target_service['name'] + " at " + target_np['name'] + "\nAbout: " + target_service[
-                    'description'])
+                print("Name: " + target_service['name'] + " at " + target_np[
+                    'name'] + "\nAbout: " + target_service[
+                          'description'])
 
                 qq = "select AVG(rating) from Service_Feedback where service_id = {}".format(
                     target_service['service_id'])
@@ -142,7 +157,7 @@ class UserInterface:
                     break
 
         except Exception as q:
-            print(type(q))
+            perror('An error occurred in fetching')
             inp = input('Press ENTER to continue>> ')
 
     def do_a_booking(self):
@@ -175,7 +190,8 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
-                unit_code = int(input('Enter the corresponding number of the National Park you want to book: '))
+                unit_code = int(input(
+                    'Enter the corresponding number of the National Park you want to book: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -187,15 +203,18 @@ class UserInterface:
                     target_np['unit_code'])
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
-                    print("Sorry No services are available in that National Park")
+                    print(
+                        "Sorry No services are available in this National Park")
                     time.sleep(5)
                     continue
                 print("Here's a list of services in", target_np['name'])
                 i = 0
                 for row in rows:
-                    print('{}. {}: \n {}'.format(i + 1, row['name'], row['description']))
+                    print('{}. {}: \n {}'.format(i + 1, row['name'],
+                                                 row['description']))
                     i += 1
-                service_code = int(input('Enter the corresponding number of the service you want to book: '))
+                service_code = int(input(
+                    'Enter the corresponding number of the service you want to book: '))
                 if not syntax.validate_range(service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -213,10 +232,11 @@ class UserInterface:
                 print("Here's a list of timings of", target_service['name'])
                 i = 0
                 for row in rows:
-                    print('{}. {}'.format(row['sub_service_id'], row['timings']))
+                    print('{}. {}'.format(i + 1, row['timings']))
                     i += 1
-                sub_service_code = int(input('Enter the corresponding number of the timings of the service you want to '
-                                             'book: '))
+                sub_service_code = int(input(
+                    'Enter the corresponding number of the timings of the service you want to '
+                    'book: '))
                 if not syntax.validate_range(sub_service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -225,7 +245,8 @@ class UserInterface:
                 # Get target Date
                 print_header('Booking')
                 dates_list = "SELECT date, price from Sub_service_timings where availability > 0" \
-                             " AND sub_service_id = {}".format(sub_service_code)
+                             " AND sub_service_id = {}".format(
+                    sub_service_code)
                 rows = self.db.get_result(dates_list)
                 if len(rows) == 0:
                     print("Sorry No services are avaliable")
@@ -236,19 +257,27 @@ class UserInterface:
                 for row in rows:
                     print('{}. {}'.format(i + 1, row['date']))
                     i += 1
-                date_code = int(input('Enter the corresponding number of the date you want to book for: '))
+                date_code = int(input(
+                    'Enter the corresponding number of the date you want to book for: '))
                 if not syntax.validate_range(sub_service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
                 target_date = rows[date_code - 1]
 
                 total_price += target_date['price']
-                chosen.append('{} for Rs.{} at {} on {}'.format(target_service['name'], target_date['price'],
-                                                                target_sub_service['timings'], target_date['date']))
+                chosen.append(
+                    '{} for Rs.{} at {} on {}'.format(target_service['name'],
+                                                      target_date['price'],
+                                                      target_sub_service[
+                                                          'timings'],
+                                                      target_date['date']))
 
                 qq = "INSERT INTO Booking_service(booking_id, sub_service_id, price, target_date)" \
-                     "VALUES ({}, {}, {}, '{}')".format(booking_id, target_sub_service['sub_service_id'],
-                                                        target_date['price'], target_date['date'])
+                     "VALUES ({}, {}, {}, '{}')".format(booking_id,
+                                                        target_sub_service[
+                                                            'sub_service_id'],
+                                                        target_date['price'],
+                                                        target_date['date'])
                 q.append(qq)
 
                 qq = "UPDATE Sub_service_timings SET availability = availability - 1" \
@@ -268,7 +297,8 @@ class UserInterface:
             print('Do you want to book the above services? (y/n): ')
             ans = input()
             if ans.lower() != 'y':
-                qq = "DELETE FROM Booking where booking_id = {}".format(booking_id)
+                qq = "DELETE FROM Booking where booking_id = {}".format(
+                    booking_id)
                 self.db.execute_query([qq])
                 return
             self.db.execute_query(q)
@@ -284,10 +314,11 @@ class UserInterface:
     def cancel_booking(self):
         try:
             while True:
-                qq = "SELECT B.booking_id, B.number_of_adults, B.number_of_children , S.name," \
+                qq = "SELECT DISTINCT B.booking_id, B.number_of_adults, B.number_of_children , S.name," \
                      " SS.sub_service_id, SS.timings, BS.target_date, BS.price from " \
                      " Booking B, Booking_service BS, Sub_service SS, Services S" \
-                     " WHERE B.user_id  = {} and BS.sub_service_id = SS.sub_service_id and S.service_id = SS.service_id" \
+                     " WHERE B.user_id  = {} and BS.sub_service_id = SS.sub_service_id " \
+                     " and B.booking_id = BS.booking_id and S.service_id = SS.service_id" \
                      "".format(self.current_user.user_id)
 
                 rows = self.db.get_result(qq)
@@ -302,7 +333,8 @@ class UserInterface:
 
                 print(tabulate(rows, headers='keys', showindex='always'))
 
-                booking_code = int(input('Enter the corresponding number of the booking you want to cancel: '))
+                booking_code = int(input(
+                    'Enter the corresponding number of the booking you want to cancel: '))
                 if not syntax.validate_range(booking_code, 0, len(rows) - 1):
                     perror('invalid Input')
                     return
@@ -318,8 +350,19 @@ class UserInterface:
                     del_time)
 
                 self.db.execute_query([qq])
-                psuccess('The Cancellation was a success. The amount will be returned in a few days')
-                print('Do you want to continue to cancel your prior bookings? (y/n): ')
+                psuccess(
+                    'The Cancellation was a success. The amount will be returned in a few days')
+
+                rows = self.db.get_result("SELECT * FROM Booking_service where booking_id = {}".format(del_booking_id))
+
+                if len(rows) == 0:
+                    qq = "DELETE FROM Booking" \
+                         " where booking_id = {}".format(
+                        del_booking_id)
+                    self.db.execute_query([qq])
+
+                print(
+                    'Do you want to continue to cancel your prior bookings? (y/n): ')
                 ans = input()
                 if ans.lower() != 'y':
                     break
@@ -341,7 +384,8 @@ class UserInterface:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
                 unit_code = int(
-                    input('Enter the corresponding number of the National Park you want to provide feedback for: '))
+                    input(
+                        'Enter the corresponding number of the National Park you want to provide feedback for: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
@@ -352,25 +396,39 @@ class UserInterface:
                     target_np['unit_code'])
                 rows = self.db.get_result(service_list)
                 if len(rows) == 0:
-                    print("Sorry we couldn't find services that are available,",
-                          "You will now be transferred back to the main screen")
+                    print(
+                        "Sorry we couldn't find services that are available,",
+                        "You will now be transferred back to the main screen")
                     time.sleep(2.5)
                     continue
 
-                print("Here's a list of services offered by", target_np['name'])
+                print("Here's a list of services offered by",
+                      target_np['name'])
                 i = 0
                 for row in rows:
-                    print('{}. {}: \n {}'.format(i + 1, row['name'], row['description']))
+                    print('{}. {}: \n {}'.format(i + 1, row['name'],
+                                                 row['description']))
                     i += 1
 
                 service_code = int(
-                    input('Enter the corresponding number of the service you want to provide feedback for: '))
+                    input(
+                        'Enter the corresponding number of the service you want to provide feedback for: '))
                 if not syntax.validate_range(service_code, 1, len(rows)):
                     perror('invalid Input')
                     return
                 target_service = rows[service_code - 1]
 
-                rating = int(input('Enter the rating you would like to give to {}: '.format(target_service['name'])))
+                test = self.db.get_result('SELECT * FROM Service_Feedback where user_id = {} and '
+                                          'service_id = {}'.format(f(self.current_user.user_id),
+                                                                   f(target_service['service_id'])))
+                if not syntax.empty(test):
+                    print('You have already provided feedback for that service, Try Again.')
+                    inp = input('Press Enter to continue')
+                    continue
+
+                rating = int(input(
+                    'Enter the rating you would like to give to {}: '.format(
+                        target_service['name'])))
 
                 if not syntax.validate_range(rating, 1, 5):
                     perror('invalid Input')
@@ -399,7 +457,6 @@ class UserInterface:
             time.sleep(5)
 
     def give_feature_feedback(self):
-        pass
         try:
             q = []
             while True:
@@ -412,35 +469,60 @@ class UserInterface:
                     print('{}. {}'.format(i + 1, row['name']))
                     i += 1
                 unit_code = int(
-                    input('Enter the corresponding number of the National Park you want to provide feedback for:'))
+                    input('Enter the corresponding number of the National Park you want to provide feedback for: '))
                 if not syntax.validate_range(unit_code, 1, len(rows)):
                     perror('invalid Input')
                     return
                 target_np = rows[unit_code - 1]
 
+                rows = []
                 print_header('Feature Feedback')
-                feature_list = "SELECT F.feature_name,  
-                rows = self.db.get_result(service_list)
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F,' \
+                               ' Lodging T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F, Trail T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F,' \
+                               ' ViewPoints T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
+                feature_list = 'SELECT Z.zone_number, Z.feature_id, F.feature_name, T.name FROM Features F, ' \
+                               'Public_Facilities T,' \
+                               ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                               ' and Z.belongs_to = {}'.format(f(target_np['unit_code']))
+                temp = self.db.get_result(feature_list)
+                rows += temp
                 if len(rows) == 0:
                     print("Sorry we couldn't find features that are available,",
                           "You will now be transferred back to the main screen")
-                    time.sleep(2.5)
+                    imp = input('Press Enter to continue>>')
                     continue
 
-                print("Here's a list of features in", target_np['name'])
-                i = 0
-                for row in rows:
-                    print('{}. {}: \n {}'.format(i + 1, row['name'], row['description']))
-                    i += 1
-
-                service_code = int(
-                    input('Enter the corresponding number of the service you want to provide feedback for:'))
-                if not syntax.validate_range(service_code, 1, len(rows)):
+                print(tabulate(rows, headers='keys', showindex='always'))
+                feature_code = int(
+                    input('Enter the corresponding number of the feature you want to provide feedback for: '))
+                if not syntax.validate_range(feature_code, 0, len(rows) - 1):
                     perror('invalid Input')
                     return
-                target_service = rows[service_code - 1]
+                target_feature = rows[feature_code]
 
-                rating = int(input('Enter the rating you would like to give to {}'.format(target_service['name'])))
+                test = self.db.get_result('SELECT * FROM Feature_Feedback where user_id = {} and '
+                                          'feature_id = {}'.format(f(self.current_user.user_id),
+                                                                   f(target_feature['feature_id'])))
+                if not syntax.empty(test):
+                    print('You have already provided feedback for that feature, Try Again.')
+                    inp = input('Press Enter to continue')
+                    continue
+
+                rating = int(input('Enter the rating you would like to give to {}: '.format(target_feature['name'])))
 
                 if not syntax.validate_range(rating, 1, 5):
                     perror('invalid Input')
@@ -449,8 +531,8 @@ class UserInterface:
                 print("Enter your remarks if any")
                 remarks = input()
 
-                qq = "INSERT INTO Service_Feedback(user_id, service_id, rating, remarks, date)" \
-                     "VALUES({},{},{},'{}',NOW())".format(self.current_user.user_id, target_service['service_id'],
+                qq = "INSERT INTO Feature_Feedback(user_id, feature_id, rating, remarks, date)" \
+                     "VALUES({},{},{},'{}',NOW())".format(self.current_user.user_id, target_feature['feature_id'],
                                                           rating, remarks)
 
                 q.append(qq)
@@ -462,11 +544,96 @@ class UserInterface:
 
             self.db.execute_query(q)
             psuccess("Congratulations your feedback was recorded")
-            time.sleep(2.5)
+            imp = input('Press Enter to continue>>')
 
         except Exception as q:
-            print(type(q))
-            time.sleep(5)
+            perror('An unexpected error occurred')
+            imp = input('Press Enter to continue>>')
+
+    def nearby(self):
+
+        print_header("Where am I")
+
+        target_np = NationalPark(self.db)
+        target_np.get_national_park()
+
+        print_header("Where am I")
+
+        ch = int(input(
+            "Enter 1 if you are on a trail and 2 if you are at another feature: "))
+
+        print_header("Where am I")
+
+        query = ""
+        if ch != 1 and ch != 2:
+            print("Incorrect choice! Oops...")
+            return
+        elif ch == 1:
+            rows = []
+            trail_list = ' SELECT T.name FROM Features F, Trail T,' \
+                         ' Zone_contains Z where F.feature_id = Z.feature_id and T.feature_id = F.feature_id' \
+                         ' and Z.belongs_to = {}'.format(f(target_np.unitcode))
+            rows = self.db.get_result(trail_list)
+
+            if len(rows) == 0:
+                print(
+                    "Sorry we couldn't find trails that are available,",
+                    "You will now be transferred back to the main screen")
+                time.sleep(2.5)
+                return
+
+            print("Here's a list of trails offered by",
+                  target_np.name)
+            i = 0
+            for row in rows:
+                print('{}. {}'.format(i + 1, row['name']))
+                i += 1
+
+            arg = int(input("Enter the Trail from the above options: "))
+
+            if not syntax.validate_range(arg, 1, len(rows)):
+                perror('invalid Input')
+                return
+            query = " SELECT DISTINCT F.feature_id, F.feature_name" \
+                    " FROM Crosses C, Features F, Trail T " \
+                    " WHERE T.name = {} AND F.feature_id = C.feature_id " \
+                    " AND T.feature_id = C.trail_id".format(f(rows[arg - 1]['name']))
+
+        elif ch == 2:
+
+            rows = []
+            feature_list = ' SELECT DISTINCT F.feature_name, F.feature_id FROM Features F, ' \
+                           ' Zone_contains Z where F.feature_id = Z.feature_id' \
+                           ' and Z.belongs_to = {}'.format(f(target_np.unitcode))
+            rows = self.db.get_result(feature_list)
+
+            if len(rows) == 0:
+                print(
+                    "Sorry we couldn't find features that are available,",
+                    "You will now be transferred back to the main screen")
+                time.sleep(2.5)
+                return
+
+            print("Here's a list of features offered by",
+                  target_np.name)
+            i = 0
+            for row in rows:
+                print('{}. {}'.format(i + 1, row['feature_name']))
+                i += 1
+
+            arg = int(input("Enter the Feature from the above options: "))
+            query = " SELECT F.feature_id, F.feature_name FROM Features F WHERE " \
+                    " F.geohash LIKE CONCAT((SELECT LEFT(geohash,6) " \
+                    " FROM Features K WHERE K.feature_id = {}),'%')".format(rows[arg - 1]['feature_id'])
+
+        rows = self.db.get_result(query)
+
+        if len(rows) == 0:
+            print("No data")
+        else:
+            print(tabulate(rows, headers="keys", tablefmt="fancy_grid"))
+
+        ans = input('\nPress ENTER to continue')
 
     def loop(self):
         print("Are you an existing user? (y/n): ")
