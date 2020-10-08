@@ -249,13 +249,13 @@ class UserInterface:
                     sub_service_code)
                 rows = self.db.get_result(dates_list)
                 if len(rows) == 0:
-                    print("Sorry No services are avaliable")
+                    print("Sorry No services are available")
                     time.sleep(5)
                     continue
-                print("Here's a list of dates which are available: ")
+                print("Here's a list of dates which are available and the corresponding prices: ")
                 i = 0
                 for row in rows:
-                    print('{}. {}'.format(i + 1, row['date']))
+                    print('{}.|  {}  | Rs.{}'.format(i + 1, row['date'], row['price']))
                     i += 1
                 date_code = int(input(
                     'Enter the corresponding number of the date you want to book for: '))
