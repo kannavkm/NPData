@@ -25,6 +25,7 @@ After this install the external dependencies.
 We recommend the creation of a `virtual environment` 
 before this step.
 ```
+python3 -m venv venv
 pip install -r requirements.txt
 ```
 Now run `main.py`
